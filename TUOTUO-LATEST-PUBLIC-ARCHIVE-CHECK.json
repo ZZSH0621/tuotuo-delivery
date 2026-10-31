@@ -11,5 +11,7 @@
   "sha256": "a320a7fc5e87100968e94ae365c55accece9d992cf1a0dedc8cc9482aef16b7b",
   "zip_entries": 252,
   "zip_crc": "passed",
-  "github_download_verified": false
+  "github_download_verified": true,
+  "github_download_verification_date": "2026-10-31",
+  "verified_archive_commit": "d9ce0eadbe556e3602832f585719a159ea631d2d"
 }
