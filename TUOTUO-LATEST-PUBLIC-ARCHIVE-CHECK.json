@@ -1,0 +1,15 @@
+{
+  "filename": "tuotuo-latest-public-source.zip",
+  "bytes": 9699203,
+  "sha256": "82a2b4dd2a843ee0e578ce54061aba4049288eef020ed381eeaeef74ab354bb1",
+  "zip_crc": "passed",
+  "zip_entries": 195,
+  "manifest_hashed_files": 194,
+  "source_commit": "aa61b5dc3a4f4944ac30105b121794a04bc4eb7c",
+  "github_download_verified": true,
+  "github_download_verification_date": "2026-10-31",
+  "models_included": false,
+  "production_version": "v18",
+  "saved_source_version": "v20",
+  "api_enabled": false
+}
