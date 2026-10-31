@@ -3,7 +3,7 @@
   "saved_version": "v20",
   "production_version": "v18",
   "production_deployed": false,
-  "github_published": false,
+  "github_published": true,
   "api_status": "disabled; OpenAI-only BYOK; no real provider call verified",
   "removed_from_source": [
     "PORTRAIT-PREVIEW-QA.md",
@@ -247,5 +247,6 @@
     "vendor/shadcn-tailwind-4.13.0.css": "bc7d83425702955b4cb67cb14ede9d603f9d912376d57a2d81d661094d2a782a",
     "vite.config.ts": "22ff558b1636d251e076f74c1697c7166079861667af10922d6bc505cb8f8290",
     "worker/index.ts": "a0a10229cdda6f5fdb32234e3539007412233bb4938a671866c9295a44a3bdb6"
-  }
+  },
+  "publication_note": "External manifest updated after GitHub publication; file hashes describe the unchanged ZIP contents. The in-ZIP manifest retains build-time publication status."
 }
