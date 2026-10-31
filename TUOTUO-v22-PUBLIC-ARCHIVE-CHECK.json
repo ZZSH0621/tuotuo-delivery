@@ -1,0 +1,11 @@
+{
+  "filename": "tuotuo-v22-public-source.zip",
+  "bytes": 9708347,
+  "sha256": "8b17ee6f287abcd267cc8c6f1d9835e2f46f1cc9b448bd2696dc98f9a908c3b2",
+  "zip_crc": "passed",
+  "file_count": 207,
+  "source_commit": "7acc3f2e5535647e61864bf29514d72570274225",
+  "no_dependencies_builds_runtime_or_models": true,
+  "manifest_hash_verification": "all listed archived files matched",
+  "two_images_six_sounds_unchanged": true
+}
