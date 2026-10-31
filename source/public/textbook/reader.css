@@ -21,3 +21,20 @@
 .embedded-library mark{background:#743655;color:#fff7ef}
 
 .search-status{font-size:12px;line-height:1.6;color:var(--muted);margin:8px 0 12px;overflow-wrap:anywhere}.search-status:empty{display:none}
+.search-hints{margin-bottom:14px}
+.search-hints button{min-height:36px;transition:background .15s,border-color .15s}
+.search-hints button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:white}
+.topic-summary{margin:0 0 22px;padding:20px;border:1px solid var(--line);border-radius:16px;background:#fffdf8}
+.topic-summary-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topic-summary-heading h2{margin:0;font-size:17px;line-height:1.5}
+.topic-summary-heading>span{font-size:11px;color:var(--muted)}
+.topic-summary>p{font-size:13px;line-height:1.8;color:var(--muted);margin:10px 0 16px}
+.topic-summary-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.topic-content-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px;min-height:80px;text-align:left;padding:12px;border:1px solid var(--line);border-radius:11px;background:transparent}
+.topic-content-card>span{font-size:12px;font-weight:600}
+.topic-content-card small{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;color:var(--muted);font-size:10px}
+.topic-content-card small b{font-size:16px;color:var(--pink);font-weight:400}
+.topic-content-card:hover{border-color:var(--pink)}
+.embedded-library .topic-summary{background:#241d25;border-color:#674257}
+.embedded-library .search-hints button[aria-pressed="true"],.embedded-library .search-hints button[aria-pressed="true"]:hover{background:#ff2ba5;color:#171419;border-color:#ff2ba5}
+@media(max-width:480px){.topic-summary{padding:16px}.topic-summary-links{grid-template-columns:1fr}.topic-content-card{flex-direction:row;align-items:center;min-height:44px;gap:12px;padding:11px 12px}.topic-content-card small{width:auto;flex-shrink:0}.topic-summary>p{font-size:12px;margin-bottom:12px}.topic-summary-heading h2{font-size:16px}}

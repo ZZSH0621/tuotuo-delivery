@@ -6,7 +6,8 @@
 <main>
 <header><div><span class="eyebrow">TUOTUO / KNOWLEDGE</span><h1>把知识，放在手边。</h1><p>从一个关键词，找到对应章节与教材原页。</p></div><span class="book-icon" aria-hidden="true">✳</span></header>
 <form id="searchForm" role="search"><label for="query">搜索教材</label><div class="search-row"><span aria-hidden="true">⌕</span><input id="query" type="search" aria-label="搜索护理知识" placeholder="搜索护理知识，如：血压、无菌技术、标本采集" autocomplete="off" maxlength="120"><button type="submit">搜索 ↗</button></div></form><p id="searchStatus" class="search-status" role="status" aria-live="polite"></p>
-<div class="search-hints" id="searchHints"><span>试着查找</span><button data-query="血压">血压测量</button><button data-query="无菌">无菌技术</button><button data-query="标本">标本采集</button><button data-query="护理记录">护理记录</button></div>
+<div class="search-hints" id="searchHints" role="group" aria-label="常用知识主题"></div>
+<section id="topicSummary" class="topic-summary" aria-labelledby="topicSummaryTitle" hidden></section>
 <div class="library-status"><span id="stats" role="status">正在整理教材索引…</span><button id="sourceToggle" aria-expanded="false" aria-controls="sourceInfo">来源与收录说明 ＋</button></div>
 <section id="sourceInfo" class="source-info" hidden><h2>来源与收录范围</h2><p>《基础护理学》第 7 版，人民卫生出版社。根据提供的扫描文件建立，保留原教材来源与页码。</p><p>已排除作者、编者介绍、前言、前置目录和第一章绪论，从第二章正文开始收录。书后索引、参考文献单独编组。</p><p id="sourceNotes"></p><p>文字由本地 OCR 识别，尚未逐字校对。药名、数字、单位和表格请对照原页；教材资料供学习查阅，具体工作遵循现行医嘱与院内流程。</p></section>
 <section id="resultsSection"><div class="section-heading"><h2 id="resultsTitle">按章节探索</h2><button id="clearSearch" hidden>清除搜索</button></div><div id="results" aria-live="polite"><div class="loading">正在加载知识库…</div></div><div id="pagination" class="pagination"></div></section>

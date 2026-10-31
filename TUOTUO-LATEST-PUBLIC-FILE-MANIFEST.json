@@ -1,7 +1,7 @@
 {
   "release": {
-    "production_version": 49,
-    "source_commit": "d1802925f0ddde6c05e4290152964f6c6000bf30",
+    "production_version": 50,
+    "source_commit": "91446116efb679f689db5be96a52dbec20f6cccf",
     "synced_on": "2026-10-31",
     "excluded_resource_files": 492,
     "secrets_included": false,
@@ -831,23 +831,28 @@
     },
     {
       "path": "public/textbook/index.html",
-      "bytes": 4575,
-      "sha256": "f9ee51e7b53d9e9bdb691ca4da11172c98084bd1089177830a8e4dc4fff6716f"
+      "bytes": 4497,
+      "sha256": "55f2da03297e89fd1a699f876bf638f0173db0222962d1f875b304ecc8ca6b35"
     },
     {
       "path": "public/textbook/reader.css",
-      "bytes": 10967,
-      "sha256": "aa8253d976c348f7402fad336dcda9b0e15aecc5beca1feba03c6a963fb50a61"
+      "bytes": 12880,
+      "sha256": "87d38fa6ce01b363e5e88d25f982349a25f52867beb3fa9999714ecff0e07dd3"
     },
     {
       "path": "public/textbook/reader.js",
-      "bytes": 11826,
-      "sha256": "48896d9cb93347a44555a648d3fbd5701f3848f331aa0e9182243479d3bb3cd9"
+      "bytes": 13521,
+      "sha256": "176223cf23818af424376fa7eec4eaae6106dc43d72530d363599ae2cae87cbe"
     },
     {
       "path": "public/textbook/search-core.mjs",
       "bytes": 918,
       "sha256": "7b62beeb64c182418fcf4cfd03a024fcbcaf22ffb3cfd9f67ed03d1cd7de2995"
+    },
+    {
+      "path": "public/textbook/topic-summaries.mjs",
+      "bytes": 2048,
+      "sha256": "07c21d44364b1ff34d69588bddbab524e1509e176e1d1303a2b60255dd6bfe94"
     },
     {
       "path": "public/tuotuo-intro.css",
@@ -907,12 +912,12 @@
     {
       "path": "PUBLIC-RELEASE.json",
       "bytes": 275,
-      "sha256": "6cb578d271ca05348c384a629f87f483694d851d9430a5579808b430c5c93970"
+      "sha256": "cfb1822d9e89e2dc59abfaa7b8792fc523cb455d4c5b7c74d7b7b294923a7a51"
     },
     {
       "path": "README.md",
-      "bytes": 3270,
-      "sha256": "43a53b617817a5223fc7f12b7e7d224580622631359b90f82b725b25b4d7f711"
+      "bytes": 4013,
+      "sha256": "65eee48ab790e1aae1e8c667fbc0d7b4eec9355598a5f3e0419e81d53db4d8c1"
     },
     {
       "path": "REBUILD-REPORT.md",

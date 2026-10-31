@@ -1,9 +1,11 @@
 import {searchPages} from './search-core.mjs';
+import {availableTopicSummaries} from './topic-summaries.mjs';
 const $ = (s) => document.querySelector(s);
 const escape = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let book, chapterId = '', query = '', resultPage = 0, currentPage, mode = 'scan';
 const pageSize = 12;
 let searchAlternatives=[],searchGeneration=0,searchController=null;const searchCache=new Map();
+let preparedTopics=[];
 function searchTerms(){return [...new Set([query,...searchAlternatives].flatMap(q=>q.trim().split(/\s+/)).filter(Boolean))];}
 function searchBusy(busy){$('#searchForm button').textContent=busy?'解析中…':'搜索 ↗';$('#searchForm').setAttribute('aria-busy',String(busy));}
 function cancelSearch(){searchGeneration++;searchController?.abort();searchController=null;searchBusy(false);}
@@ -12,6 +14,22 @@ function chapterFor(p) { return book.chapters.find(c => c.id === p.chapterId); }
 function pageLabel(p) { return p.printedPage ? `教材第 ${p.printedPage} 页` : `PDF 第 ${p.pdfPage} 页`; }
 function chapterNumber(c, i) { return c.category === 'textbook' ? String(i+2).padStart(2,'0') : '附'; }
 function chapterPages(c) { return book.pages.filter(p => p.chapterId === c.id); }
+function renderTopicSummary(matches) {
+  const terms=[query,...searchAlternatives].map(normalized).filter(Boolean);
+  const topic=terms.length ? preparedTopics.find(t=>t.terms.some(term=>terms.some(q=>q.includes(normalized(term)))))
+    : preparedTopics.find(t=>!chapterId||t.links.some(link=>link.page.chapterId===chapterId));
+  $('#searchHints').innerHTML=preparedTopics.map(t=>`<button type="button" data-topic="${escape(t.id)}" aria-pressed="${t.id===topic?.id}">${escape(t.title)}</button>`).join('');
+  const panel=$('#topicSummary');
+  if(query&&matches&&!matches.length){panel.hidden=true;panel.innerHTML='';return;}
+  if(!topic){panel.hidden=true;panel.innerHTML='';return;}
+  panel.hidden=false;
+  panel.innerHTML=`<div class="topic-summary-heading"><h2 id="topicSummaryTitle">${escape(topic.title)}</h2><span>小结</span></div><p>${escape(topic.summary)}</p><div class="topic-summary-links">${topic.links.map(link=>`<button type="button" class="topic-content-card" data-page="${link.pdfPage}"><span>${escape(link.title)}</span><small>${escape(pageLabel(link.page))} <b aria-hidden="true">↗</b></small></button>`).join('')}</div>`;
+}
+function chooseTopic(id) {
+  const topic=preparedTopics.find(t=>t.id===id);if(!topic)return;
+  cancelSearch();chapterId='';query=topic.query;searchAlternatives=[];resultPage=0;currentPage=null;
+  $('#query').value=query;$('#searchStatus').textContent='';$('#reader').hidden=true;renderResults();updateUrl();
+}
 function highlighted(s) {
   if (!query.trim()) return escape(s);
   const terms = searchTerms().sort((a,b) => b.length-a.length);
@@ -36,12 +54,14 @@ function renderResults() {
   $('#stats').textContent = `${book.chapters.length} 个章节与附录 · ${book.pages.length} 页收录 · 可搜索正文，查看原页`;
   $('#clearSearch').hidden = !chapterId && !query;
   if (!chapterId && !query) {
+    renderTopicSummary();
     $('#resultsTitle').textContent = '按章节探索';
     $('#results').innerHTML = `<div class="chapter-grid">${book.chapters.map((c,i) => {const pages=chapterPages(c);return `<button class="chapter-card" data-chapter="${escape(c.id)}"><span class="card-number">${chapterNumber(c,i)} / TEXTBOOK</span><h3>${escape(c.title)}</h3><p>${pages.length} 页 · ${pages[0]?pageLabel(pages[0]):'教材正文'}</p><span class="arrow">↗</span></button>`;}).join('')}</div>`;
     $('#pagination').innerHTML = '';
     return;
   }
   const matches=searchPages(book,{query,alternatives:searchAlternatives,chapterId});
+  renderTopicSummary(matches);
   const count = Math.max(1,Math.ceil(matches.length/pageSize));
   resultPage = Math.min(resultPage,count-1);
   $('#resultsTitle').textContent = query ? `“${query}” · ${matches.length} 页结果${chapter?' / '+chapter.title:''}` : `${chapter.title} · ${matches.length} 页`;
@@ -88,7 +108,7 @@ $('#query').addEventListener('input',()=>{cancelSearch();$('#searchStatus').text
 $('#query').addEventListener('search',()=>{if(book)search();});
 $('#allChapters').onclick=()=>{if(book){chapterId='';resultPage=0;renderResults();updateUrl();}};
 $('#clearSearch').onclick=()=>reset();
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!book)return;if(b.dataset.chapter)chooseChapter(b.dataset.chapter);if(b.dataset.page)readPage(b.dataset.page);if(b.dataset.query){$('#query').value=b.dataset.query;chapterId='';search();}if(b.id==='resetFromEmpty')reset();if(b.id==='prevResults'||b.id==='nextResults'){resultPage+=b.id==='prevResults'?-1:1;renderResults();$('#resultsSection').scrollIntoView({behavior:'smooth',block:'start'});}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!book)return;if(b.dataset.topic)chooseTopic(b.dataset.topic);if(b.dataset.chapter)chooseChapter(b.dataset.chapter);if(b.dataset.page)readPage(b.dataset.page);if(b.dataset.query){$('#query').value=b.dataset.query;chapterId='';search();}if(b.id==='resetFromEmpty')reset();if(b.id==='prevResults'||b.id==='nextResults'){resultPage+=b.id==='prevResults'?-1:1;renderResults();$('#resultsSection').scrollIntoView({behavior:'smooth',block:'start'});}});
 $('#sourceToggle').onclick=()=>{const show=$('#sourceInfo').hidden;$('#sourceInfo').hidden=!show;$('#sourceToggle').setAttribute('aria-expanded',show);};
 $('#closeReader').onclick=()=>{$('#reader').hidden=true;currentPage=null;updateUrl();};
 $('#scanMode').onclick=()=>setMode('scan');$('#textMode').onclick=()=>setMode('text');
@@ -100,6 +120,7 @@ $('#pageJump').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefau
 try {
   const response=await fetch('book.json');if(!response.ok)throw Error('教材索引加载失败');
   book=await response.json();if(!book.pages?.length||!book.chapters?.length)throw Error('教材索引为空');
+  preparedTopics=availableTopicSummaries(book);
   const params=new URLSearchParams(location.search);chapterId=book.chapters.some(c=>c.id===params.get('chapter'))?params.get('chapter'):'';query=(params.get('q')||'').slice(0,120);$('#query').value=query;
   const notes=book.sourceNotes;$('#sourceNotes').textContent=Array.isArray(notes)?notes.join('；'):String(notes||'原扫描件可能存在缺页，页码以原页为准。');
   renderResults();if(params.get('page'))readPage(params.get('page'),false);else if(query)void search();
