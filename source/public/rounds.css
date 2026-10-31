@@ -1,0 +1,15 @@
+.entry-mode-tabs,.rounds-panel{display:none}
+.phone-home #phoneRecorder[hidden],#roundsPanel[hidden]{display:none!important}
+.history-region+.history-region{margin-top:28px;padding-top:22px;border-top:1px solid #44313e}
+.history-region-title{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:16px;font-weight:650;color:#eee1ea;margin:0 0 15px}
+.history-region-title span{font-size:12px;font-weight:400;color:#ab96a7}
+.round-log-card .record-clock{display:none}.round-log-card .record-message{font-size:15px;line-height:1.7}
+.round-bed{padding:16px;border:1px solid #624056;border-radius:14px;background:#2a202c;margin:12px 0}.round-bed h3{margin:0 0 12px;color:#ff90cd}.round-category{margin:12px 0}.round-category>b{font-size:13px;color:#a4e8ee}.round-category ul{margin:5px 0;padding-left:19px;line-height:1.7}.round-original{margin-top:20px}.round-original p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}
+.single-log-section .timeline-records>.phone-list-heading{display:none}.single-log-section .timeline-records{margin-top:0}
+@media(max-width:760px){
+ .entry-mode-tabs{display:flex;gap:4px;flex-shrink:0;background:#241e28;border-radius:999px;padding:4px;margin:8px 20px 12px}.entry-mode-tabs button{flex:1;min-width:0;min-height:40px;padding:8px 10px;border-radius:999px;color:#a99aaa;font-size:13px;font-weight:650;white-space:nowrap}.entry-mode-tabs [aria-selected="true"]{background:#f7eef4;color:#171419}.entry-mode-tabs button:disabled{opacity:.6}
+ .rounds-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:18px 20px;overflow-y:auto}.round-clock{font-size:43px;line-height:1.2;font-variant-numeric:tabular-nums}.rounds-panel>p[role="status"]{margin:0;text-align:center;font-size:13px;line-height:1.65;color:#b7a4b3}.round-actions{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;margin-top:14px}.round-actions button{min-height:44px;padding:10px 20px;border-radius:14px}.round-actions .round-start{display:grid;place-items:center;width:134px;height:134px;border-radius:50%;background:#ff2ba5;color:#171419;font-size:17px;font-weight:700;box-shadow:0 0 0 12px #ff2ba50e}.round-actions .primary{min-width:180px;background:#ff2ba5;color:#171419;font-weight:700}.rounds-panel button:disabled{opacity:.5}.round-transcript{width:100%;max-height:150px;overflow-y:auto;white-space:pre-wrap;font-size:13px;line-height:1.7;background:#241c27;border-radius:14px;padding:14px;margin:8px 0}
+ body[data-entry-mode="rounds"] .phone-quick-note{display:none}.rounds-panel[hidden]{display:none!important}
+ .history-region-title{font-size:14px;color:#bba8b7}.round-log-card .event.record-card{background:#241d29;border:0;border-left:3px solid #a4e8ee;min-height:86px;padding:16px;border-radius:14px}
+ .timeline-records .event.record-card[data-timed="true"]{grid-template-columns:44px minmax(0,1fr) auto}.timeline-records .record-card[data-timed="true"] .record-clock{display:block;font-size:12px;color:#ff90cd;padding-left:4px}
+}

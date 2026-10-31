@@ -1,15 +1,15 @@
 {
+  "production_version": 49,
+  "source_commit": "d1802925f0ddde6c05e4290152964f6c6000bf30",
+  "synced_on": "2026-10-31",
+  "excluded_resource_files": 492,
+  "secrets_included": false,
+  "textbook_fulltext_included": false,
+  "local_model_weights_included": false,
   "filename": "tuotuo-latest-public-source.zip",
-  "bytes": 9699203,
-  "sha256": "82a2b4dd2a843ee0e578ce54061aba4049288eef020ed381eeaeef74ab354bb1",
+  "bytes": 10632431,
+  "sha256": "a320a7fc5e87100968e94ae365c55accece9d992cf1a0dedc8cc9482aef16b7b",
+  "zip_entries": 252,
   "zip_crc": "passed",
-  "zip_entries": 195,
-  "manifest_hashed_files": 194,
-  "source_commit": "aa61b5dc3a4f4944ac30105b121794a04bc4eb7c",
-  "github_download_verified": true,
-  "github_download_verification_date": "2026-10-31",
-  "models_included": false,
-  "production_version": "v18",
-  "saved_source_version": "v20",
-  "api_enabled": false
+  "github_download_verified": false
 }

@@ -1,0 +1,2 @@
+export const SITE_ID='appgprj_6ae456215e8c81919aff115aec5ac9ab';
+export function runtimeConfig(env={}){let origin='';try{const u=new URL(env.API_EXPECTED_ORIGIN);if(u.protocol==='https:'&&u.origin===env.API_EXPECTED_ORIGIN)origin=u.origin;}catch{}return {serverKey:env.DASHSCOPE_API_KEY||'',fixedProvider:env.ASR_PROVIDER||'bailian-cn',fixedWorkspace:env.ASR_WORKSPACE||'',enabled:env.API_TRANSCRIPTION_ENABLED==='true'&&!!origin,origin,budgetMicros:null,maxCostMicrosPerRequest:100000,siteId:SITE_ID};}

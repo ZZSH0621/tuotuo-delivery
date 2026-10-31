@@ -1,0 +1,33 @@
+.phone-home,.phone-profile,.phone-nav,.phone-header{display:none}
+@media(max-width:760px){
+ body{background:#171419;color:#fff7ef;padding-top:0}
+ .sidebar{display:none!important}
+ main{max-width:100%;width:100%;padding:0 18px calc(92px + env(safe-area-inset-bottom,0px));margin:0;background:#171419;min-height:100dvh}
+ .phone-header{display:flex;align-items:center;justify-content:space-between;height:64px;padding:8px 2px;border-bottom:1px solid #382c36;color:#fff7ef}
+ .phone-header b{font-size:19px;font-weight:650}.phone-header button{height:44px;width:44px;border:0;background:transparent;color:#fff7ef;font-size:30px}
+ .phone-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:140;background:#171419f5;backdrop-filter:blur(16px);border-top:1px solid #382c36;padding:7px 16px calc(8px + env(safe-area-inset-bottom,0px))}
+ .phone-nav button{display:flex;flex:1;flex-direction:column;align-items:center;gap:5px;justify-content:center;min-height:52px;font-size:12px;color:#aa9aa6;border:0;background:none}
+ .phone-nav svg{width:25px;height:25px}.phone-nav [aria-current]{color:#dc1687;font-weight:650}
+ body[data-mobile-tab="record"] main> :not(.phone-header):not(.phone-home),body[data-mobile-tab="profile"] main> :not(.phone-header):not(.phone-profile){display:none!important}
+ body[data-mobile-tab="record"] .phone-home{display:block;height:calc(100dvh - 145px - env(safe-area-inset-bottom,0px));min-height:390px;margin:0 -18px}
+ #phoneRecorder{border:0;width:100%;height:100%;display:block;background:#171419}
+ body[data-mobile-tab="profile"] .phone-profile{display:block;padding-top:24px}.phone-profile>h1{font-size:25px;color:#fff7ef;margin:0 0 20px}
+ .phone-profile .tuotuoHero{margin:0 0 24px;min-height:360px}.phone-profile .heroCopy{z-index:2}
+ body[data-mobile-tab="tasks"] .tuotuoHero,body[data-mobile-tab="tasks"] .notice{display:none!important}
+ body[data-mobile-tab="tasks"] .topgrid{margin-top:22px}.phone-menu{border-radius:16px;overflow:hidden;background:#241d25}
+ .phone-menu button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:58px;padding:15px 18px;background:#241d25;color:#fff7ef;border:0;border-bottom:1px solid #382c36;font-size:16px;text-align:left}
+ .phone-menu span{font-size:23px;color:#ac94a3}body:has(#screenSaver:not([hidden])) .phone-nav{display:none}
+ body[data-mobile-tab="tasks"] .composer{border-top-width:3px}
+ .phone-nav button:focus-visible,.phone-menu button:focus-visible{outline:3px solid #dc1687;outline-offset:-4px}
+}
+@media(max-width:760px){.phone-header{min-height:64px;max-height:64px;margin:0!important}.phone-home{margin-block:0!important}body[data-mobile-tab="record"] main{height:100dvh;min-height:0;padding-bottom:0;overflow:hidden}body[data-mobile-tab="record"] .phone-home{height:calc(100dvh - 140px - env(safe-area-inset-bottom,0px));min-height:0}}
+
+
+
+.phone-search{display:none}
+@media(max-width:760px){
+ body[data-mobile-tab="search"] main>:not(.phone-header):not(.phone-search){display:none!important}
+ body[data-mobile-tab="search"] main{height:100dvh;min-height:0;padding-bottom:0;overflow:hidden}
+ body[data-mobile-tab="search"] .phone-search{display:block;height:calc(100dvh - 140px - env(safe-area-inset-bottom,0px));margin:0 -18px}
+ #phoneKnowledge{width:100%;height:100%;display:block;border:0;background:#171419}
+}

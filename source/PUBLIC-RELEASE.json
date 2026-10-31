@@ -1,0 +1,9 @@
+{
+  "production_version": 49,
+  "source_commit": "d1802925f0ddde6c05e4290152964f6c6000bf30",
+  "synced_on": "2026-10-31",
+  "excluded_resource_files": 492,
+  "secrets_included": false,
+  "textbook_fulltext_included": false,
+  "local_model_weights_included": false
+}

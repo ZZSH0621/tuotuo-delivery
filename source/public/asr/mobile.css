@@ -1,0 +1,99 @@
+/* Compact recording workspace: one primary action and a stable status line. */
+:root{--radius:20px;font-family:'PingFang SC','Microsoft YaHei',sans-serif}
+.app-header{height:64px;padding-inline:20px}
+main{padding:8px 20px calc(100px + env(safe-area-inset-bottom,0px))}
+h1{font-size:28px;line-height:1.3;letter-spacing:0}
+.page-title{margin-bottom:20px}.page-title p{font-size:15px;margin-top:6px}
+.brand-banner{height:64px;margin:0 0 16px;padding:12px 16px;border-radius:16px;background:#30222e;color:var(--ink)}
+.brand-banner strong{font-size:32px;color:var(--pink);margin-right:-12px;letter-spacing:-1px}
+.brand-banner b{font-size:12px;font-weight:500;margin-top:4px}
+.brand-banner .mascot{width:68px;height:91px;right:13px;bottom:0}
+.brand-banner .sticker{display:none}
+.model-row{border:0;border-radius:0;min-height:32px;margin-bottom:12px;padding:0;font-size:13px;color:var(--muted);cursor:default}
+.model-row:hover{background:transparent}.model-state{font-size:12px;color:var(--cyan)}
+.model-state:before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:3px}
+.recorder{padding:24px 16px 18px;border:1px solid #493743;background:#211c23;box-shadow:none}
+.waveform{height:42px;margin-bottom:12px;gap:4px}.waveform span{max-height:38px;width:3px}
+.timer{font-size:40px;line-height:1.2;letter-spacing:-1px}.recorder-caption{font-size:14px;line-height:1.5;min-height:21px;margin:8px 0 24px}
+.mic-button{width:88px;height:88px;box-shadow:0 0 0 8px #ff2ba510}.record-actions{gap:14px;margin-bottom:24px}.record-actions b{font-size:15px}
+.source-actions{padding-top:16px;border-top:1px solid #493743}.source-actions .secondary{border:0;min-height:44px;background:#30272f;border-radius:12px}
+.footnote,.scope-note,.session-state{font-size:12px;line-height:1.6}.footnote{margin-top:16px}.session-state{margin-top:16px}
+.file-info{padding-top:16px}.file-info>span{font-size:14px}.file-info .icon-button{width:44px;height:44px}
+.audio-ready p{font-size:13px;line-height:1.6}.audio-ready .primary{font-size:15px;min-height:48px}
+#record-error{background:#3a232e;color:#ffb8ce;border:1px solid #76465b;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.6}
+.playback{margin:20px 0;padding:16px;border-radius:16px}.playback b{font-size:15px}.playback div span{font-size:12px}
+.field-label{font-size:15px}textarea{font-size:16px;line-height:1.8;min-height:210px;border-radius:16px}
+.consent{font-size:15px;min-height:44px;margin:20px 0 16px}.consent input{margin-top:2px}
+.bottom-nav{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));background:#171419f5;backdrop-filter:blur(14px)}
+.bottom-nav button{min-height:54px;font-size:12px}.view{scroll-margin-bottom:100px}
+@media(prefers-reduced-motion:reduce){.recording .waveform span{animation:none}*{scroll-behavior:auto!important}}
+@media(max-width:350px){main{padding-inline:16px}.app-header{padding-inline:16px}.waveform{gap:3px}.brand-banner b{font-size:11px}}
+/* Direct phone entry: no cover or intermediary recording card. */
+html.quick-record{color-scheme:dark;background:#171419;color:#fff7ef}
+.quick-record body,.quick-record .app-shell{background:#171419;color:#fff7ef;min-height:100dvh}
+.quick-record .app-header,.quick-record .page-title,.quick-record .brand-banner,.quick-record .model-row,.quick-record .bottom-nav,.quick-record .scope-note,.quick-record .footnote,.quick-record #source-actions{display:none!important}
+.quick-record main{padding:0 24px;min-height:100dvh;display:flex;align-items:center;justify-content:center}
+.quick-record #voice-view{width:100%;max-width:420px}
+.quick-record .recorder{background:none;border:0;padding:0;box-shadow:none;display:flex;flex-direction:column;align-items:center}
+.quick-record #waveform,.quick-record #timer,.quick-record #record-caption{display:none}
+.quick-record .record-actions{gap:26px;margin:0;min-height:230px;justify-content:center}
+.quick-record .mic-button{width:144px;height:144px;background:#f9239e;color:#fff;border:0;box-shadow:0 0 0 14px #f9239e0b,0 12px 35px #d5197b20}
+.quick-record .mic-button svg{width:48px;height:48px;stroke-width:1.6}.quick-record .record-actions b{font-size:17px;font-weight:500;color:#c9bec8}
+.quick-record .session-state{font-size:12px;color:#a895a3;margin:22px 0 0;line-height:1.7;text-align:center}
+.quick-record .session-state a{color:#c51274;text-decoration:underline}
+.quick-record .recording #waveform,.quick-record .recording #timer,.quick-record .recording #record-caption,.quick-record .processing #record-caption,.quick-record .has-audio #record-caption{display:flex;color:#c9bec8}
+.quick-record .recording #timer{font-size:38px;color:#fff7ef}.quick-record .recording #waveform{margin-bottom:24px}
+.quick-record .active-actions{flex-direction:column-reverse;align-items:center;margin:24px 0 0;width:100%;gap:24px}
+.quick-record #stop{flex:none;width:132px;height:132px;border-radius:50%;font-size:0;background:#f9239e;color:white}.quick-record #stop svg{width:36px;height:36px}
+.quick-record #pause{flex:none;min-height:44px;color:#c9bec8;border-color:#51414e;background:#241d25;width:132px}
+.quick-record #cancel-recording{margin-top:16px;width:auto;color:#727980;border:0;font-size:13px}
+.quick-record #audio-ready{width:100%;padding:20px;border-radius:18px;background:#241d25;border:1px solid #493743;color:#fff7ef}
+.quick-record .audio-ready p{color:#b9aab5}.quick-record .file-info{border:0;padding:0}.quick-record #cancel-request{color:#c9bec8;border-color:#51414e}
+.quick-record #record-error{font-size:14px;background:#3a232e;color:#ffb8ce;border-color:#76465b}
+
+
+/* The same recorder is used in the phone home and the signed-in page. */
+.home-recorder .app-header,.home-recorder .page-title,.home-recorder .bottom-nav{display:none!important}
+.home-recorder main{padding:18px 20px 24px}.home-recorder .app-shell{min-height:100dvh}
+.home-recorder .brand-banner{margin-bottom:16px}
+.signin-record{display:grid;place-items:center}.signin-record:focus-visible{outline:3px solid var(--cyan);outline-offset:5px}
+
+/* Keep the held control under the finger until pointerup/cancel. */
+#record{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.holding #active-actions,.holding #cancel-recording{display:none!important}
+.holding #record{background:#ff64bc;box-shadow:0 0 0 12px #ff2ba51a}
+.holding .record-actions{margin-bottom:14px}
+
+/* The phone's primary recording view is a single clear action. */
+.home-recorder,.home-recorder body{height:100%;min-height:0;background:#151218}
+.home-recorder .app-shell{height:100%;min-height:0;background:#151218;display:flex;flex-direction:column}
+.home-recorder #main{flex:1;min-height:0;display:flex;padding:0 20px!important;background:#151218}
+.home-recorder #voice-view{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+.home-recorder .brand-banner,.home-recorder .model-row{display:none!important}
+.home-recorder .recorder{display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;background:transparent;box-shadow:none;padding:20px 0;min-height:300px;margin:0;width:100%;border-radius:0}
+.home-recorder .recorder:not(.recording):not(.processing):not(.has-audio) .waveform,.home-recorder .recorder:not(.recording):not(.processing):not(.has-audio) .timer,.home-recorder .recorder:not(.recording):not(.processing):not(.has-audio) .recorder-caption{display:none}
+.home-recorder .record-actions{display:flex;flex-direction:column;align-items:center;gap:24px;margin:0}
+.home-recorder .mic-button{width:156px;height:156px;min-height:156px;background:#ff2ba5;border:0;border-radius:50%;box-shadow:0 0 0 13px #ff2ba512,0 0 0 27px #ff2ba508;color:#171419}
+.home-recorder .mic-button .icon{width:52px;height:52px}.home-recorder #record-label{font-size:17px;color:#fff7ef}
+.home-recorder .timer{font-size:42px;line-height:1.2;margin:8px 0}.home-recorder .recorder-caption{font-size:14px;color:#b5a2b1;margin:4px 0 30px}.home-recorder .waveform{margin:0 0 12px;width:100%}
+.home-recorder .error,.home-recorder .session-state{font-size:12px;line-height:1.6;margin:12px 0;text-align:center}
+.home-recorder .audio-ready{width:100%;margin-top:12px}.home-recorder #cancel-recording{margin:22px 0 0;width:auto;min-height:38px;padding:6px 16px}
+
+/* Status and playback must never move the held microphone target. */
+#record:active{transform:none}
+.holding .record-actions{margin-bottom:24px}
+.home-recorder #voice-view{display:block;position:relative;min-height:420px;height:100%}
+.home-recorder .recorder{position:relative;display:block;height:100%;min-height:420px;padding:0;--control-center:50%}
+.home-recorder #record-actions{position:absolute;left:50%;top:var(--control-center);transform:translate(-50%,-50%);width:100%;height:210px;margin:0;justify-content:flex-start;gap:24px}
+.home-recorder #record-label{display:block;height:30px;line-height:30px;white-space:nowrap}
+.home-recorder #waveform{position:absolute;left:0;top:calc(var(--control-center) - 201px);width:100%;height:30px;margin:0;display:flex}
+.home-recorder #timer{position:absolute;left:0;top:calc(var(--control-center) - 167px);width:100%;height:50px;margin:0;display:block}
+.home-recorder #record-caption{position:absolute;left:0;top:calc(var(--control-center) - 124px);width:100%;height:21px;margin:0;display:block;white-space:nowrap}
+.home-recorder .recorder:not(.recording):not(.processing):not(.has-audio) #waveform,
+.home-recorder .recorder:not(.recording):not(.processing):not(.has-audio) #timer,
+.home-recorder .recorder:not(.recording):not(.processing):not(.has-audio) #record-caption{visibility:hidden}
+.home-recorder #active-actions{position:absolute;top:calc(var(--control-center) + 126px);left:0;width:100%;margin:0}
+.home-recorder #cancel-recording{position:absolute;top:calc(var(--control-center) + 186px);left:50%;transform:translateX(-50%);margin:0}
+.home-recorder #audio-ready{position:absolute;top:calc(var(--control-center) + 130px);left:0;width:100%;margin:0;padding-bottom:20px}
+.home-recorder #record-error,.home-recorder #session-state{position:absolute;top:calc(50% + 130px);left:0;width:100%;margin:0}
+.home-recorder #voice-view:has(#audio-ready:not([hidden])) #record-error{top:calc(50% + 400px)}

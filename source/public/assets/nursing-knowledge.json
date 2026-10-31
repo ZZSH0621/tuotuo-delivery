@@ -1,0 +1,1114 @@
+{
+  "schema_version": "0.1",
+  "created_on": "2026-10-30",
+  "purpose": "voice_intent_and_draft_only",
+  "clinical_execution_enabled": false,
+  "coverage_claim": "selected_common_projects_not_hospital_complete",
+  "entries": [
+    {
+      "id": "beta_lactam_skin",
+      "name": "β内酰胺类药物皮内试验",
+      "aliases": [
+        "药物皮试",
+        "青霉素皮试",
+        "头孢皮试"
+      ],
+      "category": "护理与监测",
+      "scope": "区分计划施行、已施行及判读；适应证须由医师判定。",
+      "clarifying_questions": [
+        "具体药物及有效医嘱是什么？",
+        "是准备做还是已经做完需判读？",
+        "实际施行时间是什么？"
+      ],
+      "time_semantics": [
+        "计划执行时间",
+        "施行后的判读窗口"
+      ],
+      "anchor_event": "已核对的实际施行事件",
+      "source": {
+        "title": "β内酰胺类抗菌药物皮肤试验指导原则（2021年版）医院官网转载",
+        "url": "https://cdfy120.cdu.edu.cn/info/1293/7947.htm",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2021-10-12",
+        "scope_note": "中国指南转载；仅β内酰胺皮内试验，不适用于所有皮试"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "tuberculin_skin",
+      "name": "结核菌素皮肤试验",
+      "aliases": [
+        "PPD",
+        "结核菌素皮试",
+        "结核皮试"
+      ],
+      "category": "护理与监测",
+      "scope": "与药物皮试分开匹配；结果由受训人员判读。",
+      "clarifying_questions": [
+        "是否明确为结核菌素试验？",
+        "实际施行时间和判读预约是什么？"
+      ],
+      "time_semantics": [
+        "施行后的判读窗口",
+        "判读预约"
+      ],
+      "anchor_event": "已记录的施行事件",
+      "source": {
+        "title": "CDC Clinical Testing Guidance: Tuberculin Skin Test",
+        "url": "https://www.cdc.gov/tb/hcp/testing-diagnosis/tuberculin-skin-test.html",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2025-01-31",
+        "scope_note": "美国结核菌素皮试指导；用于区分类别，不替代中国院内规范"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "blood_pressure",
+      "name": "血压测量与复测",
+      "aliases": [
+        "测血压",
+        "血压",
+        "复测血压"
+      ],
+      "category": "护理与监测",
+      "scope": "静息准备、同次重复读数与医嘱复测是不同任务。",
+      "clarifying_questions": [
+        "是初测、同次重复读数还是医嘱复测？",
+        "有效护理计划及时间是什么？"
+      ],
+      "time_semantics": [
+        "测前准备",
+        "同次读数间隔",
+        "按计划复测"
+      ],
+      "anchor_event": "经确认的休息开始、上一读数或医嘱时间",
+      "source": {
+        "title": "AHA Home Blood Pressure Monitoring",
+        "url": "https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/monitoring-your-blood-pressure-at-home",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2025-08-14",
+        "scope_note": "家庭血压指导，不是住院复测医嘱"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "pulse_oximetry",
+      "name": "脉搏血氧测量",
+      "aliases": [
+        "测血氧",
+        "血氧",
+        "SpO2",
+        "指氧"
+      ],
+      "category": "护理与监测",
+      "scope": "记录血氧测量和设备情境；不自动解释为诊断或调整氧疗。",
+      "clarifying_questions": [
+        "是单次测量还是按计划复测？",
+        "测量设备及护理计划是什么？"
+      ],
+      "time_semantics": [
+        "指定时间测量",
+        "按批准计划复测"
+      ],
+      "anchor_event": "已确认的测量或计划事件",
+      "source": {
+        "title": "MHRA The use and regulation of pulse oximeters",
+        "url": "https://www.gov.uk/guidance/the-use-and-regulation-of-pulse-oximeters-information-for-healthcare-professionals",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2021-03-26",
+        "scope_note": "设备测量局限与临床解释，未给统一复测时限"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "wound_dressing",
+      "name": "术后伤口敷料护理",
+      "aliases": [
+        "换药",
+        "敷料更换",
+        "伤口护理"
+      ],
+      "category": "护理与监测",
+      "scope": "伤口部位、类型和渗液情况影响护理安排；不能统一倒计时。",
+      "clarifying_questions": [
+        "伤口部位、类型及当前敷料是什么？",
+        "本人的伤口护理计划规定何时更换？"
+      ],
+      "time_semantics": [
+        "护理计划预约",
+        "情况变化后的人员评估"
+      ],
+      "anchor_event": "已确认的护理计划或评估事件",
+      "source": {
+        "title": "CUH Caring for your surgical wound",
+        "url": "https://www.cuh.nhs.uk/patient-information/caring-for-your-surgical-wound/",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2024-05-08",
+        "scope_note": "CUH神经科学科术后出院说明，第5版；不是全部伤口换药方案"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "abdominal_ultrasound",
+      "name": "腹部超声",
+      "aliases": [
+        "腹部B超",
+        "肝胆胰脾超声",
+        "腹部彩超"
+      ],
+      "category": "影像检查",
+      "scope": "准备要求按具体部位和检查科室通知核对。",
+      "clarifying_questions": [
+        "具体检查脏器是什么？",
+        "预约时间及本院准备通知是什么？"
+      ],
+      "time_semantics": [
+        "预约时间",
+        "预约前准备"
+      ],
+      "anchor_event": "检查预约及经确认的准备起点",
+      "source": {
+        "title": "MSK About Your Ultrasound",
+        "url": "https://www.mskcc.org/cancer-care/patient-education/ultrasound",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2024-07-23",
+        "scope_note": "MSK本机构按检查类型提供准备要求，不直接迁移至中国院内流程"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "pelvic_ultrasound",
+      "name": "经腹盆腔超声",
+      "aliases": [
+        "盆腔B超",
+        "经腹妇科超声",
+        "盆腔彩超"
+      ],
+      "category": "影像检查",
+      "scope": "与经阴道途径分开；准备要求须按本院通知。",
+      "clarifying_questions": [
+        "检查途径是经腹还是经阴道？",
+        "预约及准备通知是什么？"
+      ],
+      "time_semantics": [
+        "预约时间",
+        "预约前准备"
+      ],
+      "anchor_event": "检查预约及经确认的准备起点",
+      "source": {
+        "title": "MSK About Your Ultrasound",
+        "url": "https://www.mskcc.org/cancer-care/patient-education/ultrasound",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2024-07-23",
+        "scope_note": "MSK本机构按检查类型提供准备要求，不直接迁移至中国院内流程"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "transvaginal_ultrasound",
+      "name": "经阴道超声",
+      "aliases": [
+        "阴超",
+        "经阴道B超"
+      ],
+      "category": "影像检查",
+      "scope": "MSK区分其与经腹盆腔检查准备；不套用经腹准备规则。",
+      "clarifying_questions": [
+        "是否确认为经阴道途径？",
+        "预约和本院检查要求是什么？"
+      ],
+      "time_semantics": [
+        "预约时间",
+        "院内准备核对"
+      ],
+      "anchor_event": "已核对预约",
+      "source": {
+        "title": "MSK About Your Ultrasound",
+        "url": "https://www.mskcc.org/cancer-care/patient-education/ultrasound",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2024-07-23",
+        "scope_note": "MSK本机构按检查类型提供准备要求，不直接迁移至中国院内流程"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "bladder_ultrasound",
+      "name": "膀胱超声",
+      "aliases": [
+        "膀胱B超",
+        "膀胱彩超"
+      ],
+      "category": "影像检查",
+      "scope": "检查准备与具体预约通知关联，不把准备时间当作检查耗时。",
+      "clarifying_questions": [
+        "具体检查范围是什么？",
+        "预约和膀胱准备要求是否已确认？"
+      ],
+      "time_semantics": [
+        "预约时间",
+        "预约前准备"
+      ],
+      "anchor_event": "已核对预约及准备事件",
+      "source": {
+        "title": "MSK About Your Ultrasound",
+        "url": "https://www.mskcc.org/cancer-care/patient-education/ultrasound",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2024-07-23",
+        "scope_note": "MSK本机构按检查类型提供准备要求，不直接迁移至中国院内流程"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "thyroid_ultrasound",
+      "name": "甲状腺超声",
+      "aliases": [
+        "甲状腺B超",
+        "甲状腺彩超"
+      ],
+      "category": "影像检查",
+      "scope": "不与超声引导穿刺或腹部超声准备混淆。",
+      "clarifying_questions": [
+        "是单纯超声还是含穿刺？",
+        "预约时间是什么？"
+      ],
+      "time_semantics": [
+        "预约时间"
+      ],
+      "anchor_event": "已核对预约",
+      "source": {
+        "title": "MSK About Your Ultrasound",
+        "url": "https://www.mskcc.org/cancer-care/patient-education/ultrasound",
+        "verified_on": "2026-10-30",
+        "published_or_reviewed_on": "2024-07-23",
+        "scope_note": "MSK本机构按检查类型提供准备要求，不直接迁移至中国院内流程"
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "imaging_ct",
+      "name": "CT检查",
+      "aliases": [
+        "CT",
+        "计算机断层扫描"
+      ],
+      "category": "影像检查",
+      "scope": "识别CT预约及准备任务；区分平扫、增强及具体部位，不提供诊断或操作参数。",
+      "clarifying_questions": [
+        "检查部位及平扫或增强类型是什么？",
+        "是否已有检查科室确认的预约与准备单？",
+        "对比剂、既往反应及相关安全信息是否已由专业人员核验？"
+      ],
+      "time_semantics": [
+        "预约到场时间不是扫描持续时间。",
+        "准备、扫描、对比剂后观察与报告回传属于不同事件，不能互相推算。"
+      ],
+      "anchor_event": "检查科室确认的预约时间；如涉及观察，须另行记录经本院批准的起算事件",
+      "source": {
+        "title": "NHS — CT scan",
+        "url": "https://www.nhs.uk/tests-and-treatments/ct-scan/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面说明CT用途、检查准备由医院告知，并区分对比剂使用、扫描及检查后观察；不是本院护理计时规范。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "imaging_mri",
+      "name": "磁共振检查",
+      "aliases": [
+        "MRI",
+        "磁共振",
+        "核磁共振"
+      ],
+      "category": "影像检查",
+      "scope": "识别MRI预约及安全筛查待办；不自动判断植入物兼容性或替代磁共振安全审核。",
+      "clarifying_questions": [
+        "检查部位及是否增强是什么？",
+        "植入物或体内金属等安全筛查是否已由检查科室确认？",
+        "是否涉及镇静及对应的独立医嘱和恢复安排？"
+      ],
+      "time_semantics": [
+        "到场、扫描开始、扫描结束与恢复或观察结束需分别记录。",
+        "不能用一般检查耗时推断患者何时可离院。"
+      ],
+      "anchor_event": "检查科室确认的MRI预约或实际扫描事件",
+      "source": {
+        "title": "NHS — MRI scan",
+        "url": "https://www.nhs.uk/tests-and-treatments/mri-scan/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面涵盖金属及植入物等筛查、可能使用对比剂或放松药物及检查后安排；这里只用于分类和澄清。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "imaging_xray",
+      "name": "普通X线摄影",
+      "aliases": [
+        "X线",
+        "X光",
+        "拍片",
+        "DR"
+      ],
+      "category": "影像检查",
+      "scope": "识别普通X线摄影任务；不把造影、CT或骨密度检查当作同一准备流程。",
+      "clarifying_questions": [
+        "医嘱要求的部位与检查类型是什么？",
+        "是床旁摄影还是到放射科检查？",
+        "检查科室是否已确认适用的安全筛查和准备要求？"
+      ],
+      "time_semantics": [
+        "排队、摆位、影像采集和报告可用时间不是同一时间。",
+        "不得从普通拍片名称自动生成禁食或检查后观察倒计时。"
+      ],
+      "anchor_event": "已确认的预约时间或实际影像采集完成事件",
+      "source": {
+        "title": "NHS — X-ray",
+        "url": "https://www.nhs.uk/tests-and-treatments/x-ray/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面区分普通X线及多种特殊X线检查，并说明准备依检查类型而异；不支持统一计时。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "functional_resting_ecg",
+      "name": "静息心电图",
+      "aliases": [
+        "ECG",
+        "EKG",
+        "心电图"
+      ],
+      "category": "心功能检查",
+      "scope": "识别静息心电图；须与动态心电图、运动负荷检查及持续心电监护区分。",
+      "clarifying_questions": [
+        "医嘱是静息、动态还是负荷心电图？",
+        "是预约检查还是需按本院急症流程立即处理的任务？"
+      ],
+      "time_semantics": [
+        "准备完成、开始记录、记录完成及结果审核分别记录。",
+        "一般检查时长不能变成急症等待时间。"
+      ],
+      "anchor_event": "专业人员确认的心电图记录开始或完成事件",
+      "source": {
+        "title": "NHS — Electrocardiogram (ECG)",
+        "url": "https://www.nhs.uk/tests-and-treatments/electrocardiogram/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面说明ECG记录心脏电活动，并区分静息、便携和负荷类型；不提供本院急症时限。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "functional_ambulatory_ecg",
+      "name": "动态心电图",
+      "aliases": [
+        "Holter",
+        "动态心电",
+        "便携式心电记录"
+      ],
+      "category": "心功能检查",
+      "scope": "识别便携心电记录的佩戴、记录及设备归还任务；佩戴时长须以具体处方为准。",
+      "clarifying_questions": [
+        "医嘱要求哪类记录设备和记录时长？",
+        "实际开始记录的时间是否由工作人员确认？",
+        "设备归还时间和地点是否已明确？"
+      ],
+      "time_semantics": [
+        "设备安装时间不一定等于有效记录开始时间。",
+        "记录终止时间与设备归还预约须分开保存，不采用名称中的时长作为默认值。"
+      ],
+      "anchor_event": "工作人员确认的有效记录开始时间；归还使用独立预约",
+      "source": {
+        "title": "NHS — Electrocardiogram (ECG): portable ECG",
+        "url": "https://www.nhs.uk/tests-and-treatments/electrocardiogram/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面说明便携记录仪存在不同佩戴时长，并需指定日期时间归还；不据此生成默认佩戴定时器。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "imaging_echo",
+      "name": "超声心动图",
+      "aliases": [
+        "心脏彩超",
+        "心超",
+        "Echo",
+        "TTE"
+      ],
+      "category": "心脏超声检查",
+      "scope": "识别超声心动图预约；常规经胸、经食管及负荷检查不得合并为同一准备模板。",
+      "clarifying_questions": [
+        "是经胸、经食管还是负荷超声心动图？",
+        "是否使用对比剂或镇静，且有对应医嘱？",
+        "检查科室的准备和检查后安排是否已确认？"
+      ],
+      "time_semantics": [
+        "预约时间、扫描时间及可能的恢复或观察阶段分别处理。",
+        "检查名称不能自动决定禁食、恢复或离院时间。"
+      ],
+      "anchor_event": "已确认的检查预约；恢复或观察另依本院批准事件起算",
+      "source": {
+        "title": "NHS — Echocardiogram",
+        "url": "https://www.nhs.uk/tests-and-treatments/echocardiogram/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面区分经胸、负荷及经食管超声，并说明准备及检查后安排与检查方式和用药有关。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "functional_spirometry",
+      "name": "肺通气功能检查",
+      "aliases": [
+        "肺量计检查",
+        "肺功能",
+        "Spirometry"
+      ],
+      "category": "呼吸功能检查",
+      "scope": "识别肺量计检查及检查前核验；广义肺功能检查须再确认具体项目，不自动设置停药或复测间隔。",
+      "clarifying_questions": [
+        "具体是肺量计检查还是其他肺功能项目？",
+        "是否包含支气管舒张后复测？",
+        "适宜性评估及用药准备是否由医务人员明确？"
+      ],
+      "time_semantics": [
+        "预约、基线测量、可能的用药及复测是独立事件。",
+        "复测间隔必须来自已审核医嘱与本地流程，不由科普页面推算。"
+      ],
+      "anchor_event": "检查人员确认的测量事件；涉及用药时另行核验实际给药记录",
+      "source": {
+        "title": "NHS — Spirometry test",
+        "url": "https://www.nhs.uk/tests-and-treatments/spirometry/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面说明检查衡量呼出气体、检查前适宜性评估，以及可能吸入药物后重复测量；没有转化为执行参数。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "functional_eeg",
+      "name": "脑电图",
+      "aliases": [
+        "EEG",
+        "脑电检查"
+      ],
+      "category": "神经功能检查",
+      "scope": "识别脑电记录任务；常规、睡眠、睡眠剥夺、动态及视频脑电须明确区分。",
+      "clarifying_questions": [
+        "医嘱指定哪一种脑电图？",
+        "是否有专门的睡眠或其他准备要求？",
+        "记录开始、结束及后续安排是否已由检查科室确认？"
+      ],
+      "time_semantics": [
+        "电极安装、有效记录开始及结束分别记录。",
+        "检查持续时间因类型而异，不自动生成睡眠剥夺或记录时长。"
+      ],
+      "anchor_event": "检查人员确认的有效脑电记录开始事件",
+      "source": {
+        "title": "NHS — EEG (electroencephalogram)",
+        "url": "https://www.nhs.uk/tests-and-treatments/electroencephalogram/",
+        "verified_on": "2026-10-30",
+        "scope_note": "页面说明脑电图记录脑电活动，并列出不同检查类型及其准备差异；只支持术语及流程阶段辨识。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "venous-blood-sampling",
+      "name": "静脉血标本采集",
+      "aliases": [
+        "抽血",
+        "静脉采血",
+        "血液检查"
+      ],
+      "category": "标本采集",
+      "scope": "一般血液检验标本采集的识别与任务澄清，不覆盖具体试管、采血顺序或特殊检验操作。",
+      "clarifying_questions": [
+        "医嘱指定哪些检验项目？",
+        "是否有项目专属的进食、用药或采集时点要求？",
+        "提醒针对预约、实际采血还是送检？"
+      ],
+      "time_semantics": [
+        "预约时点、实际采集时点与检验报告时间不是同一概念。",
+        "不得从一般采血名称推断空腹时长、采后处理时长或送检期限。"
+      ],
+      "anchor_event": "由护士确认的实际采集事件或检验医嘱指定事件",
+      "source": {
+        "title": "Blood tests - NHS",
+        "url": "https://www.nhs.uk/tests-and-treatments/blood-tests/",
+        "verified_on": "2026-10-30",
+        "scope_note": "官方一般患者说明，支持血液采集和检验项目差异；不是本院采血SOP。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "blood-glucose-specimen",
+      "name": "血糖标本采集",
+      "aliases": [
+        "血糖采血",
+        "血糖检测",
+        "葡萄糖测定"
+      ],
+      "category": "标本采集",
+      "scope": "血糖检验任务名称消歧，不把静脉血糖、床旁血糖或负荷试验视为同一流程。",
+      "clarifying_questions": [
+        "医嘱是静脉血糖、床旁血糖还是葡萄糖耐量试验？",
+        "要求空腹、随机或与进食相关的哪种采集条件？",
+        "实际锚点与提醒目标是否已由护士确认？"
+      ],
+      "time_semantics": [
+        "血糖检验名称本身不提供采样间隔。",
+        "空腹、餐后与负荷后属于不同时间语义，必须读取明确医嘱。"
+      ],
+      "anchor_event": "经确认的医嘱指定事件；未确认检验类型前不设锚点",
+      "source": {
+        "title": "Blood tests - NHS",
+        "url": "https://www.nhs.uk/tests-and-treatments/blood-tests/",
+        "verified_on": "2026-10-30",
+        "scope_note": "来源确认血糖是血液检查类型；不支持任何默认餐后、负荷后或床旁复测倒计时。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "midstream-urine",
+      "name": "中段尿标本采集",
+      "aliases": [
+        "中段尿",
+        "MSU",
+        "MSSU"
+      ],
+      "category": "标本采集",
+      "scope": "成人中段尿收集名称与送检事件澄清，不延伸至导尿管取样、婴幼儿留尿或定时留尿。",
+      "clarifying_questions": [
+        "是否明确要求成人中段尿？",
+        "容器及送检要求是否来自本院检验科？",
+        "标本何时实际留取，提醒是留取还是送检？"
+      ],
+      "time_semantics": [
+        "实际留取时间与送达实验室时间分别记录。",
+        "样本保存与送检窗口需本地检验要求，不设置统一期限。"
+      ],
+      "anchor_event": "经护士确认的实际标本留取事件",
+      "source": {
+        "title": "Collection of Mid-Stream Sample of Urine (MSSU) for adults",
+        "url": "https://www.gloshospitals.nhs.uk/your-visit/patient-information-leaflets/collection-of-mid-stream-sample-of-urine-mssu-for-adults/",
+        "verified_on": "2026-10-30",
+        "scope_note": "英国医院成人患者说明，仅支持成人中段尿类别；不得直接移植容器与运送规则。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "timed-urine-24h",
+      "name": "24小时尿液收集",
+      "aliases": [
+        "24小时尿",
+        "全天尿",
+        "定时尿液收集"
+      ],
+      "category": "标本采集",
+      "scope": "定时尿液收集流程识别；名称中的24小时是检查类别描述，不是自动计时授权。",
+      "clarifying_questions": [
+        "医嘱具体检验项目和本院收集方案是什么？",
+        "起始排尿、收集开始及结束事件如何定义并由谁确认？",
+        "是否有漏收、污染、容器或保存问题需要联系检验科？"
+      ],
+      "time_semantics": [
+        "区分排空事件、实际收集起点、最后收集与送检。",
+        "不得仅凭检查名称启动计时；需医嘱、本地方案及护士确认。"
+      ],
+      "anchor_event": "本院方案定义且经护士确认的收集开始事件",
+      "source": {
+        "title": "How to collect a 24 hour urine sample | CUH",
+        "url": "https://www.cuh.nhs.uk/patient-information/how-to-collect-a-24-hour-urine-sample/",
+        "verified_on": "2026-10-30",
+        "scope_note": "CUH患者说明支持定时收集及完整收集的重要性；不授予演示系统自动启用检查时长。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "stool-specimen",
+      "name": "粪便标本采集",
+      "aliases": [
+        "大便标本",
+        "粪便检查",
+        "留便"
+      ],
+      "category": "标本采集",
+      "scope": "一般粪便标本收集与送检任务，不自动等同于FIT筛查、培养或其他特定项目。",
+      "clarifying_questions": [
+        "具体检验项目是否明确？",
+        "是否有项目专用容器和本院送检要求？",
+        "实际采集时间是否已记录？"
+      ],
+      "time_semantics": [
+        "标本采集、保存与送检为独立事件。",
+        "来源的通用返还建议不转换为统一临床倒计时。"
+      ],
+      "anchor_event": "实际标本采集事件，经护士确认",
+      "source": {
+        "title": "How to collect a sample of poo (stool sample) - NHS",
+        "url": "https://www.nhs.uk/tests-and-treatments/how-to-collect-a-sample-of-poo-stool-sample/",
+        "verified_on": "2026-10-30",
+        "scope_note": "官方患者说明支持一般粪便采样；具体检验保存及送检要求仍需本院确认。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "gastroscopy",
+      "name": "胃镜检查",
+      "aliases": [
+        "上消化道内镜",
+        "胃镜"
+      ],
+      "category": "内镜检查",
+      "scope": "上消化道内镜准备、检查及恢复阶段的事件识别，不提供禁食、镇静或恢复默认时长。",
+      "clarifying_questions": [
+        "检查及预约时间是否已确认？",
+        "是否涉及局部麻醉、镇静或取样？",
+        "提醒针对准备、检查结束还是恢复评估？"
+      ],
+      "time_semantics": [
+        "预约、禁食计划、检查结束及镇静后恢复是不同时间语义。",
+        "不得以预计操作时间代替实际结束事件或恢复评估。"
+      ],
+      "anchor_event": "经护士确认的对应阶段事件；恢复提醒不能自动等同于可进食或可离院",
+      "source": {
+        "title": "Gastroscopy - NHS",
+        "url": "https://www.nhs.uk/tests-and-treatments/gastroscopy/",
+        "verified_on": "2026-10-30",
+        "scope_note": "NHS一般患者说明支持胃镜、局麻/镇静及恢复阶段；具体计划必须依据本院医嘱。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "colonoscopy",
+      "name": "结肠镜检查",
+      "aliases": [
+        "肠镜",
+        "结肠镜",
+        "大肠镜"
+      ],
+      "category": "内镜检查",
+      "scope": "结肠镜准备、操作和恢复阶段识别；“肠镜”需澄清，不自动覆盖全部下消化道内镜。",
+      "clarifying_questions": [
+        "是否确认为结肠镜，而非其他肠道检查？",
+        "肠道准备方案、预约及用药安排是否已由医疗团队确认？",
+        "是否使用镇静，是否进行了取样或息肉处理？"
+      ],
+      "time_semantics": [
+        "肠道准备、预约、实际检查结束及恢复评估分别建模。",
+        "不得根据检查名称推断泻药剂量、准备间隔或离院时点。"
+      ],
+      "anchor_event": "经护士确认的本次准备或检查阶段事件",
+      "source": {
+        "title": "Colonoscopy - NHS",
+        "url": "https://www.nhs.uk/tests-and-treatments/colonoscopy/",
+        "verified_on": "2026-10-30",
+        "scope_note": "官方说明支持个体化准备信息及恢复监测；不直接生成肠道准备或镇静后计时规则。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    },
+    {
+      "id": "bronchoscopy",
+      "name": "支气管镜检查",
+      "aliases": [
+        "气管镜",
+        "支气管镜",
+        "纤支镜"
+      ],
+      "category": "内镜检查",
+      "scope": "支气管镜检查及恢复阶段识别；取样、灌洗及其他操作需独立确认。",
+      "clarifying_questions": [
+        "本次检查是否涉及灌洗、活检或其他操作？",
+        "局麻、镇静和术后观察计划是否已确认？",
+        "提醒针对检查结束、恢复评估还是指定复查？"
+      ],
+      "time_semantics": [
+        "检查结束、麻醉后评估与额外复查为不同事件。",
+        "不能从一般说明推导饮食恢复、镇静观察或影像复查的默认倒计时。"
+      ],
+      "anchor_event": "经护士确认的检查结束或医嘱指定事件",
+      "source": {
+        "title": "Bronchoscopy | CUH",
+        "url": "https://www.cuh.nhs.uk/patient-information/bronchoscopy/",
+        "verified_on": "2026-10-30",
+        "scope_note": "CUH医院患者说明支持支气管镜及取样/恢复差异；地方用药和时间规定不移植为通用规则。",
+        "published_or_reviewed_on": null
+      },
+      "approval_status": "research_only",
+      "default_delay_minutes": null,
+      "requires_order": true,
+      "requires_local_approval": true,
+      "auto_start_allowed": false,
+      "ui_hint": "候选知识｜待院内审核｜仅生成草稿，不启动计时",
+      "required_before_activation": [
+        "patient_reference",
+        "specific_test",
+        "workflow_stage",
+        "confirmed_anchor",
+        "approved_order_or_protocol",
+        "explicit_timing",
+        "nurse_confirmation"
+      ]
+    }
+  ]
+}

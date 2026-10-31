@@ -1,0 +1,158 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "7644578e-4a69-4d6e-9510-9534a26d8d9e",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "api_attempt_windows": {
+      "name": "api_attempt_windows",
+      "columns": {
+        "site_id": {
+          "name": "site_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "window_start_ms": {
+          "name": "window_start_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "attempts": {
+          "name": "attempts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "api_attempt_windows_site_id_user_id_window_start_ms_pk": {
+          "columns": [
+            "site_id",
+            "user_id",
+            "window_start_ms"
+          ],
+          "name": "api_attempt_windows_site_id_user_id_window_start_ms_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "attempts_positive": {
+          "name": "attempts_positive",
+          "value": "\"api_attempt_windows\".\"attempts\">0"
+        },
+        "window_nonnegative": {
+          "name": "window_nonnegative",
+          "value": "\"api_attempt_windows\".\"window_start_ms\">=0"
+        }
+      }
+    },
+    "api_cost_reservations": {
+      "name": "api_cost_reservations",
+      "columns": {
+        "site_id": {
+          "name": "site_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "request_id": {
+          "name": "request_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "budget_period_start_ms": {
+          "name": "budget_period_start_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "max_cost_micros": {
+          "name": "max_cost_micros",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at_ms": {
+          "name": "created_at_ms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "api_cost_reservations_period": {
+          "name": "api_cost_reservations_period",
+          "columns": [
+            "site_id",
+            "user_id",
+            "budget_period_start_ms"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "api_cost_reservations_site_id_user_id_request_id_pk": {
+          "columns": [
+            "site_id",
+            "user_id",
+            "request_id"
+          ],
+          "name": "api_cost_reservations_site_id_user_id_request_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cost_positive": {
+          "name": "cost_positive",
+          "value": "\"api_cost_reservations\".\"max_cost_micros\">0"
+        },
+        "period_nonnegative": {
+          "name": "period_nonnegative",
+          "value": "\"api_cost_reservations\".\"budget_period_start_ms\">=0"
+        },
+        "created_nonnegative": {
+          "name": "created_nonnegative",
+          "value": "\"api_cost_reservations\".\"created_at_ms\">=0"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

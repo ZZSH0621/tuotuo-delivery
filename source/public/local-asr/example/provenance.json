@@ -1,0 +1,22 @@
+{
+  "dataset": "google/fleurs",
+  "subset": "cmn_hans_cn",
+  "split": "test",
+  "sample_id": "1906",
+  "original_filename": "10026684690566417990.wav",
+  "expected_raw_transcription": "“这并不是告别。这是一个篇章的结束，也是新篇章的开始。”",
+  "expected_normalized_transcription": "这 并 不 是 告 别 这 是 一 个 篇 章 的 结 束 也 是 新 篇 章 的 开 始",
+  "license": "CC-BY-4.0",
+  "attribution": "Google FLEURS dataset contributors (2022), FLEURS: Few-shot Learning Evaluation of Universal Representations of Speech",
+  "dataset_url": "https://huggingface.co/datasets/google/fleurs",
+  "archive_url": "https://huggingface.co/datasets/google/fleurs/resolve/main/data/cmn_hans_cn/audio/test.tar.gz",
+  "transcript_url": "https://huggingface.co/datasets/google/fleurs/resolve/main/data/cmn_hans_cn/test.tsv",
+  "modifications": "Converted source WAV to mono 16 kHz PCM signed 16-bit WAV using ffmpeg; no trimming.",
+  "file": "mandarin-16k.wav",
+  "sha256": "e31119a9e7577d2698886e2daaf9f1439e7b583b2de11e053418275d26ce7309",
+  "bytes": 332238,
+  "sample_rate": 16000,
+  "channels": 1,
+  "sample_width": 2,
+  "duration_seconds": 10.38
+}

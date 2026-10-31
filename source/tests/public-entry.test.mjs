@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';
+test('public landing routes directly to the demo; transcription API uses anonymous server-derived quotas',()=>{const page=readFileSync('app/page.tsx','utf8'),api=readFileSync('app/api/transcriptions/route.ts','utf8');assert.match(page,/redirect\('\/legacy\/index.html'\)/);assert(!/requireChatGPTUser|signin-with-chatgpt/.test(page));assert.match(api,/anonymousQuotaIdentity/);assert.match(api,/authenticate:/);assert.match(api,/if\(!config.enabled/);});

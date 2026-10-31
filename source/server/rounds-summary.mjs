@@ -1,0 +1,15 @@
+const respond=(status,code,extra={})=>Response.json({code,...extra},{status,headers:{'Cache-Control':'no-store'}});
+const instruction='你是护士查房/交班录音整理器，仅整理提供的原文，不补充医疗建议、诊断、医嘱或推测。按原文明确床号分组，区分情况、明确已做、待做及交班注意。没有床号的内容放unassigned，不编造床号或姓名。待做时间保持原文，不自行决定提醒时间。只输出JSON：{"beds":[{"bed":"3","name":"","situation":["原文情况"],"completed":["明确已做"],"pending":["原文待做及时间"],"handoff":["交班注意"]}],"unassigned":["未归属内容"]}。没有内容的数组留空。';
+const lines=value=>Array.isArray(value)?value.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim()):[];
+export function normalizeRoundsSummary(value){if(!value||!Array.isArray(value.beds)||!Array.isArray(value.unassigned))throw Error('INVALID_SUMMARY');return {beds:value.beds.filter(b=>b&&typeof b.bed==='string').map(b=>({bed:b.bed.trim(),name:typeof b.name==='string'?b.name.trim():'',situation:lines(b.situation),completed:lines(b.completed),pending:lines(b.pending),handoff:lines(b.handoff)})),unassigned:lines(value.unassigned)};}
+export async function handleRoundsSummary(request,{config,transport=fetch}){
+ if(!config.enabled||!config.serverKey)return respond(503,'ROUNDS_NOT_CONFIGURED');
+ if(request.headers.get('origin')!==config.origin||new URL(request.url).origin!==config.origin)return respond(403,'ORIGIN_REQUIRED');
+ if(!request.headers.get('content-type')?.startsWith('application/json'))return respond(415,'JSON_REQUIRED');
+ const controller=new AbortController(),abort=()=>controller.abort();const timeout=setTimeout(abort,60000);request.signal.addEventListener('abort',abort,{once:true});
+ try{const body=await request.json();if(typeof body.text!=='string'||!body.text.trim())return respond(400,'ROUNDS_TEXT_REQUIRED');const base={'bailian-cn':'https://dashscope.aliyuncs.com','bailian-intl':'https://dashscope-intl.aliyuncs.com'}[config.fixedProvider];if(!base)return respond(503,'ROUNDS_REGION_UNSUPPORTED');
+ const response=await transport(base+'/compatible-mode/v1/chat/completions',{method:'POST',redirect:'manual',signal:controller.signal,headers:{Authorization:'Bearer '+config.serverKey,'Content-Type':'application/json',...(config.fixedWorkspace?{'X-DashScope-WorkSpace':config.fixedWorkspace}:{})},body:JSON.stringify({model:'qwen3.8-flash',messages:[{role:'system',content:instruction},{role:'user',content:body.text}],enable_thinking:false,stream:false,response_format:{type:'json_object'},max_completion_tokens:4096,temperature:0.1})});
+ const data=await response.json();if(!response.ok)return respond(502,[401,403].includes(response.status)?'ROUNDS_UNAUTHORIZED':'ROUNDS_PROVIDER_FAILED',{providerStatus:response.status});let summary;try{summary=normalizeRoundsSummary(JSON.parse(data?.choices?.[0]?.message?.content));}catch{return respond(502,'ROUNDS_INVALID_SUMMARY');}return respond(200,'ROUNDS_SUMMARIZED',{summary,model:'qwen3.8-flash'});
+ }catch{return respond(controller.signal.aborted?408:502,controller.signal.aborted?'ROUNDS_TIMEOUT':'ROUNDS_CONNECTION_FAILED');}
+ finally{clearTimeout(timeout);request.signal.removeEventListener('abort',abort);}
+}

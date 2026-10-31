@@ -1,0 +1,61 @@
+/* TUOTUO calm-screen layer. is-new is set once by JS for each new notice. */
+/* Soft plum-black ambience frames the mascot and clock without a visible grid. */
+#screenSaver{background-color:#17141b;background-image:radial-gradient(ellipse at 50% 24%,#a74c7c30 0,transparent 58%),radial-gradient(ellipse at 90% 100%,#528b941c 0,transparent 54%),linear-gradient(160deg,#241b28 0%,#18141d 55%,#12171d 100%);background-size:100% 100%;background-repeat:no-repeat;color:#fff8f4;overflow-y:auto;overscroll-behavior:contain;padding:clamp(18px,3vh,34px) 24px;isolation:isolate}
+#screenSaver.alarming{background-color:#1b141d;background-image:radial-gradient(ellipse at 50% 18%,#bd4b853d 0,transparent 60%),radial-gradient(ellipse at 90% 100%,#528b941a 0,transparent 54%),linear-gradient(160deg,#2b1c2a 0%,#1b151f 55%,#15171d 100%);background-size:100% 100%;background-repeat:no-repeat}
+#screenSaver .saverInner{position:relative;width:min(650px,100%);min-width:0;max-height:none;overflow:visible;flex-shrink:0;margin:auto;padding:14px 0 8px}
+#screenSaver .eyebrow{display:block;color:#9ce8ed;font-size:10px;letter-spacing:2.4px;font-weight:750;padding:0 84px;min-height:25px}
+#saverBattery{position:absolute;right:0;top:7px;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:28px;max-width:180px;padding:5px 10px;border:1px solid #ffffff30;border-radius:999px;background:#302731;color:#e8f8f7;font:650 10px/1.4 Arial,system-ui,sans-serif;white-space:nowrap;box-shadow:0 4px 16px #0002}
+#saverBattery:before{content:'';width:15px;height:8px;border:1px solid #93dbdf;border-radius:2px;box-shadow:3px 0 0 -1px #93dbdf;display:block;flex-shrink:0;background:linear-gradient(90deg,#93dbdf 65%,transparent 65%);background-origin:content-box;background-clip:content-box;padding:1px}
+#saverBattery[hidden]{display:none!important}
+#screenSaver .saverMascot{margin:4px auto -8px}
+/* Until a dedicated yawn frame is installed, the yawn state uses the calm pose. */
+.mascot.mascot-yawn{background-position:100% 50%;background-size:400% 100%}
+#saverTime{margin:8px 0 12px;text-shadow:0 4px 28px #0003}
+#screenSaver #saverTitle{font-size:clamp(21px,3.3vw,28px);line-height:1.4;letter-spacing:-.6px;color:#fff7ef;margin:0 0 7px}
+#screenSaver #saverSummary{color:#d0c2cf;margin:7px 0 15px;font-size:12px}
+.saverNotices{display:grid;grid-template-columns:1fr;gap:11px;width:100%;max-width:580px;margin:18px auto 20px;min-width:0;text-align:left}
+.saverNotice,#screenSaver #saverAlert .saverTask{position:relative;min-width:0;border:1px solid #bba9bc55;border-top:1px solid #e6d9e57a;border-radius:18px;background:#342937;color:#fff6f2;padding:18px 20px;box-shadow:0 12px 28px #0002,inset 0 1px 0 #ffffff0a;overflow-wrap:anywhere;transform:translateX(0);opacity:1}
+.saverNotice{border-left:3px solid #91e1e6;padding-left:19px}
+.saverNotice h3,.saverNotice h4{font-size:16px;font-weight:750;line-height:1.5;letter-spacing:-.3px;margin:0 0 6px;color:#fff7f0}
+.saverNotice p{font-size:12px!important;line-height:1.75!important;color:#e0d3df!important;margin:4px 0!important}
+.saverNotice small{font-size:10px!important;color:#bdb6c4!important;line-height:1.65!important;margin-top:7px}
+.saverNotice b,.saverNotice strong{color:#fff7ef}
+.saverNotice .eyebrow{display:block!important;text-align:left!important;padding:0!important;min-height:0!important;margin:0 0 7px!important;color:#98e6eb!important;font-size:9px!important;letter-spacing:1.5px!important}
+.saverNotice a{color:#a1eff1;text-underline-offset:3px}
+.saverNotice button{border:1px solid #a794ae70;background:#594052;color:#fff4fa;min-height:40px;padding:8px 12px;border-radius:9px;margin-top:8px;font-size:12px;font-weight:650}
+.saverNotice button:hover{background:#754660}
+#screenSaver #saverAlert .saverTask{background:#3f293b;border-color:#e69bc36b;border-top:1px solid #ffb9dc99;border-left:3px solid #ff70b9;text-align:left;margin:16px 0 20px;padding:21px 23px;box-shadow:0 15px 38px #0003,inset 0 1px 0 #ffd4e817}
+#screenSaver #saverAlert .saverTask>span{display:block;color:#ffadd7;font-size:12px;font-weight:750;letter-spacing:.4px}
+#screenSaver #saverAlert .saverTask h3{font-size:23px;line-height:1.4;color:#fff6ef;margin:8px 0 10px;font-weight:850}
+#screenSaver #saverAlert .saverTask p{color:#ecdae5!important;font-size:11px!important;line-height:1.75}
+#screenSaver #saverAlert .saverTask small{color:#d7c3d2!important;font-size:11px;line-height:1.8;margin-top:8px}
+#screenSaver #saverHint{color:#d8c6d5;font-size:12px;max-width:520px;margin:15px auto 10px;line-height:1.75}
+#screenSaver .saverInner>small:last-child{max-width:520px;margin:0 auto;color:#b7a8b7;font-size:10px;line-height:1.8}
+#screenSaver.alarming .saverInner{padding-top:12px;padding-bottom:10px}
+#screenSaver.alarming #saverTime{margin:3px 0 8px}
+#screenSaver.alarming .saverNotices{margin-top:12px;margin-bottom:12px}
+#screenSaver .saverActions{gap:10px;margin:10px 0 0}
+#screenSaver .circleAck{background:#ff4bac;color:#21101b;border:2px solid #ff9dce;box-shadow:0 0 0 7px #ff53b01c,0 12px 30px #0004;font-weight:850;flex-shrink:0}
+#screenSaver .circleAck:hover{background:#ff8dcb!important}
+#screenSaver .continueWork{color:#f0dce9;font-size:12px;text-underline-offset:5px;padding:10px 14px;border-radius:9px;min-height:44px}
+#screenSaver .continueWork:hover{background:#ffffff0c}
+#screenSaver button:focus-visible{outline:3px solid #9ce8ed;outline-offset:5px}
+@supports ((backdrop-filter:blur(12px)) or (-webkit-backdrop-filter:blur(12px))){.saverNotice{background:#302635d9;backdrop-filter:blur(18px) saturate(115%);-webkit-backdrop-filter:blur(18px) saturate(115%)}#screenSaver #saverAlert .saverTask{background:#46293ed9;backdrop-filter:blur(18px) saturate(115%);-webkit-backdrop-filter:blur(18px) saturate(115%)}#saverBattery{background:#302731c9;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}}
+@media(prefers-reduced-motion:no-preference){.saverNotice.is-new,#screenSaver #saverAlert .saverTask.is-new{animation:tuotuoNoticeIn .48s cubic-bezier(.2,.75,.25,1) both;animation-iteration-count:1}@keyframes tuotuoNoticeIn{from{opacity:0;transform:translateX(-38px)}to{opacity:1;transform:translateX(0)}}}
+@media(max-width:760px){#screenSaver,#screenSaver.alarming{padding:18px 16px}#screenSaver .saverInner,#screenSaver.alarming .saverInner{padding:12px 0 6px}#screenSaver .eyebrow{padding:0 68px 0 0;text-align:left;font-size:8px;letter-spacing:1.6px;min-height:28px}#saverBattery{top:7px;min-height:26px;max-width:142px;padding:4px 8px;font-size:9px;gap:5px}#saverBattery:before{width:13px;height:7px}#screenSaver #saverTitle{font-size:22px}#screenSaver #saverSummary{font-size:11px;margin-bottom:12px}.saverNotices{margin:15px auto;gap:10px}.saverNotice{padding:14px 15px;border-radius:14px}.saverNotice h3,.saverNotice h4{font-size:14px}.saverNotice p{font-size:11px!important}.saverNotice small{font-size:9px!important}#screenSaver #saverAlert .saverTask{padding:16px 17px;border-radius:15px;margin:12px 0 17px}#screenSaver #saverAlert .saverTask h3{font-size:21px;margin:7px 0}#screenSaver #saverAlert .saverTask>span{font-size:11px}#screenSaver #saverAlert .saverTask small{font-size:10px}#screenSaver #saverHint{font-size:10px;margin:12px auto 9px}#screenSaver .saverInner>small:last-child{font-size:9px}#screenSaver .saverActions{gap:6px}#screenSaver .circleAck{width:118px;height:118px;font-size:16px}#screenSaver .continueWork{font-size:11px}#screenSaver.alarming .saverMascot.mascot{height:78px;width:58px;margin-top:0}#screenSaver.alarming #saverTime{font-size:32px}}
+@media(max-height:700px){#screenSaver{align-items:flex-start}#screenSaver .saverInner{margin:auto}#screenSaver .saverMascot.mascot{height:130px;width:97px}#screenSaver.alarming .saverMascot.mascot{height:65px;width:49px}#screenSaver #saverTime{font-size:70px}#screenSaver.alarming #saverTime{font-size:30px}}
+@media(prefers-reduced-motion:reduce){.saverNotice,.saverNotice.is-new,#screenSaver #saverAlert .saverTask,#screenSaver #saverAlert .saverTask.is-new{animation:none!important;transform:none!important;opacity:1!important;transition:none!important}.saverNotice{background:#342937}#screenSaver #saverAlert .saverTask{background:#3f293b}}
+/* Dedicated sleepy / yawn pair; use full-width half cells without stretching. */
+#screenSaver .saverMascot.mascot-sleep,#screenSaver .saverMascot.mascot-yawn{background-image:url('assets/tuotuo/tuotuo-sleepy-yawn.png');background-size:200% 100%;background-position:0 50%;aspect-ratio:1084.5 / 725;height:180px;width:269px;max-width:100%;margin:4px auto -8px}
+#screenSaver .saverMascot.mascot-yawn{background-position:100% 50%}
+@media(max-width:760px){#screenSaver .saverMascot.mascot-sleep,#screenSaver .saverMascot.mascot-yawn{height:160px;width:239px}}
+@media(max-height:700px){#screenSaver .saverMascot.mascot-sleep,#screenSaver .saverMascot.mascot-yawn{height:130px;width:194px}}
+/* Battery glyph is deliberately unfilled; only the API-derived text reports charge. */
+#saverBattery:before{background:none}
+
+/* Calm screen uses the sleepy yawn pose. */
+#screenSaver .saverMascot.mascot-sleep{background-position:100% 50%}
+.saverNotice>span,.saverNotice>b,.saverNotice>small{display:block}.saverNotice>span{font-size:11px;color:#a4e8ee}.saverNotice>b{font-size:25px;margin:6px 0;font-variant-numeric:tabular-nums}
+@media(max-width:760px){#screenSaver .eyebrow{padding:0;text-align:center;margin-top:34px}#saverBattery{left:50%;right:auto;transform:translateX(-50%);max-width:100%}}
+
+@media(max-width:760px){#screenSaver .eyebrow{margin-top:0}}

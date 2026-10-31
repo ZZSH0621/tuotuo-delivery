@@ -1,0 +1,54 @@
+# 独立本地中文 ASR 兼容选项（非医疗验收）
+
+这条路径不依赖浏览器内置 `SpeechRecognition` 的中文包。不默认加载，不替换已有可用的内置路径。首次下载须使用者明确点击，同意约 66.16 MB 模型/运行库下载到当前浏览器；**不是把录音发给云端**。所有推理资源自托管在同源静态目录，Worker 配置 `allowRemoteModels=false`，代码无上传端点。网络离线缓存仍可能被浏览器清理，不承诺首次离线可用。
+
+## 组成与来源
+
+- Hugging Face 官方 npm `@huggingface/transformers@3.8.1`，Apache-2.0，package-lock.json固定版本/完整性。官方包 browser bundle，非未知插件。
+- ONNX Runtime Web 官方包随依赖提供的 WASM（MIT）；单线程 WASM，不需要改 flags、COOP/COEP 或系统安全设置。
+- 多语 Whisper tiny，`onnx-community/whisper-tiny` 的 q8 encoder + merged decoder；源模型 `openai/whisper-tiny`。转换库为 Hugging Face 官方文档链接的 ONNX Community，**不是 OpenAI 自己发布的 ONNX 包**；模型卡声明基于 OpenAI tiny。上游 HF 模型卡标 Apache-2.0，转换仓库未单独列许可证元数据，应保留上游归属；转换仓库未提供独立LICENSE文件，不应将代码许可证冒充模型许可证；进一步商业/医院分发前需审核转换权重许可。
+- 固定下载 revision `ff4177021cc41f7db950912b73ea4fdf7d01d8e7`，下载原始地址为 `https://huggingface.co/onnx-community/whisper-tiny/resolve/<revision>/<file>`。`asset-manifest.json`记每文件字节与SHA256，`model-files.json/model-info.json`保留官方Hub元数据。
+- 两个模型权重共40,844,231字节，其余词表、runtime、JS计入清单总量。运行内存明显大于文件大小；低内存手机可能失败或很慢；不承诺Safari/iOS/所有Edge版本可用。WebGPU可作为将来显式选项，此版只用较通用WASM，避免未测GPU差异。
+
+## 集成
+
+保留相对目录：`local-asr.mjs`, `asr-worker.mjs`, `vendor/`, `models/`。不要发布 node_modules、test-audio、node-test.mjs、package-lock到站点。未得到真实浏览器结果前不要发布空入口。
+
+```js
+import {LocalASR} from './local-asr.mjs';
+const asr = new LocalASR({onState:s => renderStatus(s)});
+loadButton.onclick = e => asr.load(e).catch(showError); // trusted click only
+// capture adapter: mono Float32Array, actual audioContext.sampleRate
+const result = await asr.transcribe(pcm, actualSampleRate);
+showEditableDraft(result.text); // 不自动确认病人、医学时长或创建临床任务
+cancelButton.onclick = () => asr.cancel();
+```
+
+`load(event)` 去重并发加载，`transcribe(pcm,sampleRate)`限制最长30秒，非16k音频在本机 OfflineAudioContext 重采样；传给模型是16kHz单声道Float32Array。Float数据中非数值、极低能量拒绝，但这不是经过医疗验证的VAD。语音识别只生成可编辑文字，保留原有确认流程。模型对静音和噪声可能幻觉，姓名、床号、药名、剂量必须核对。
+
+状态 loading / ready / transcribing / error / cancelled。`progress`是官方库逐文件事件；可以显示该文件真实 loaded/total，不能当整体模型进度。不自造百分比或预计剩余时间。
+
+`cancel()` 直接terminate Worker，终止运行和本worker网络请求，清空内存模型；再次load可尝试复用浏览器缓存。不把“取消”写成已清除磁盘缓存。宿主需自行停止麦克风轨道。此模块完全不调用getUserMedia。
+
+## 实测记录（不是模拟）
+
+`node node-test.mjs` 运行官方模型本地ONNX CPU，禁远程模型加载；公开许可Google FLEURS中文10.38秒，模型加载约724ms、推理约1187ms。`node-evidence.json`保存结果。
+
+期望：这并不是告别。这是一个篇章的结束，也是新篇章的开始。
+
+实际：这并不是告别这是一个偏胶的结束也是新偏胶的开始
+
+两处“篇章”误识为“偏胶”，所以**能运行不等于准确率合格，尤其不等于医疗可用**。没有用户麦克风/真实患者数据。音频许可证CC BY4，见test-audio/provenance.json。
+
+浏览器WASM验收另行记录；Node CPU结果不能充当浏览器性能与兼容证明。`test.html`有显式load按钮，`runFixture()`只读该公开音频PCM。`browser-test.mjs`可在已允许的测试浏览器运行，不应为测试关闭安全机制。
+
+## 官方参考
+
+- https://huggingface.co/docs/transformers.js/v3.8.1/en/index
+- https://huggingface.co/docs/transformers.js/custom_usage
+- https://huggingface.co/docs/transformers.js/guides/dtypes
+- https://huggingface.co/onnx-community/whisper-tiny
+- https://huggingface.co/openai/whisper-tiny
+- https://github.com/microsoft/onnxruntime
+
+核查日期2026-10-30。本模块不保证医院网络可达HF；部署采用自托管已校验资源，不偷换成不明镜像源。

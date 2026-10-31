@@ -1,0 +1,43 @@
+/* Content-first phone layout, retaining the existing live application. */
+.record-stamp{display:none}
+.record-swipe{position:relative;overflow:hidden;border-radius:16px;margin-bottom:12px;background:#ec287e;isolation:isolate}
+.record-swipe>.record-card{position:relative;z-index:1;margin:0!important;transform:translateX(var(--swipe-x,0px));transition:transform .2s ease;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.record-swipe.is-swiping>.record-card{transition:none}
+.record-delete{position:absolute;inset:0 0 0 auto;width:84px;display:grid;place-items:center;z-index:0;visibility:hidden;background:#ec287e;color:#fff;font-size:15px;font-weight:700;min-height:44px}
+.record-swipe.swipe-open .record-delete{visibility:visible;z-index:2}
+.record-delete:focus-visible{outline:3px solid #a4e8ee;outline-offset:-4px}
+#toast button{margin-left:14px;padding:4px 8px;border-radius:6px;color:#ff90cd;font-weight:700}
+.deleted-record{padding:16px 0;border-bottom:1px solid #58404f}.deleted-record p{margin:0 0 8px;white-space:pre-wrap;overflow-wrap:anywhere}.deleted-record small{color:#bcaab7}.deleted-record button{float:right}
+.phone-quick-note,.phone-meta,.phone-upcoming-heading{display:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:760px){
+ body{background:#151218}.phone-nav{background:#151218f5;border-color:#302931;padding:9px 16px calc(10px + env(safe-area-inset-bottom,0px))}.phone-nav button{font-size:12px;gap:5px;color:#968b98}.phone-nav [aria-current]{color:#ff2ba5}.phone-nav svg{width:24px;height:24px}
+ main{background:#151218;padding-inline:20px}.phone-header{height:76px;min-height:76px;max-height:76px;border:0;padding:14px 0 8px;gap:12px}.phone-header b{font-size:25px;letter-spacing:-.5px;font-weight:750}.phone-header>button{display:none}.phone-meta{display:block;font-size:12px;line-height:1.4;color:#9f94a2;text-align:right}
+ body[data-mobile-tab="record"] .phone-home{display:flex;flex-direction:column;height:calc(100dvh - 152px - env(safe-area-inset-bottom,0px));margin:0 -20px!important;min-height:0}
+ .phone-home #phoneRecorder{flex:1;min-height:0;height:auto;background:#151218}.phone-quick-note{display:flex;align-items:center;gap:8px;flex-shrink:0;padding:6px 7px 6px 15px;margin:12px 20px 20px;border:1px solid #332b35;border-radius:18px;background:#221d26}.phone-quick-note input{flex:1;min-width:0;background:transparent;color:#fff7ef;border:0;outline:none;font-size:14px;padding:8px 0}.phone-quick-note input::placeholder{color:#8c818f}.phone-quick-note button{min-width:40px;min-height:38px;border-radius:13px;background:#ff2ba5;color:#171419;font-weight:750}
+ body[data-mobile-tab="tasks"] .composer,body[data-mobile-tab="tasks"] .overview .metrics,body[data-mobile-tab="tasks"] .overview>.sectionhead,body[data-mobile-tab="tasks"] .overview .tip,body[data-mobile-tab="tasks"] .overview>.testbutton,body[data-mobile-tab="tasks"] .deviceLab{display:none!important}
+ body[data-mobile-tab="tasks"] .topgrid{display:block;margin:10px 0 0;gap:0}.overview.panel{border:0!important;border-radius:0;padding:0;background:transparent;box-shadow:none}.phone-upcoming-heading{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#b4a6b4;margin:0 0 10px}.phone-upcoming-heading b{font-weight:600}.phone-upcoming-heading span{font-size:12px}
+ .upcoming-work{margin-top:0;gap:9px}.upcoming-task{border:0;border-radius:16px;background:#241e29;padding:15px 16px;min-height:68px;box-shadow:none}.upcoming-task b{font-size:23px;color:#fff7ef;letter-spacing:-.5px}.upcoming-message{font-size:15px;line-height:1.55}.upcoming-empty{background:#201a23;border-radius:14px;padding:17px 16px;font-size:13px;color:#8f8493}
+ body[data-mobile-tab="tasks"] .listsection{margin-top:24px}.listheading{margin-bottom:0;display:block}.listheading>div{display:none}.listheading .search{background:transparent;border-color:#3b303d;margin-bottom:14px;min-height:40px;border-radius:12px;color:#aa98a8}.listheading .search input{color:#d8cad6;font-size:13px}.dailyViews{display:flex;justify-content:space-between;gap:3px;border-bottom:1px solid #332b35;padding:0 0 12px;margin-bottom:18px}.dailyViews button{padding:9px 10px;font-size:12px;border-radius:12px;white-space:nowrap}.dailyViews .selected{background:#ff2ba5;color:#171419}.tabs:not(.dailyViews){margin-bottom:16px}
+ .phone-list-heading{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#aa9aaa;margin:0 0 12px}.phone-list-heading b{font-weight:600}.phone-list-heading span{font-size:12px}.timeline-records{margin-top:24px}.timeline-empty{padding:16px 0;color:#8c8090;font-size:13px}
+ .timeline-records .record-swipe{border-radius:12px;margin-bottom:5px;background:#ec287e}.timeline-records .event.record-card{grid-template-columns:44px minmax(0,1fr);gap:13px;min-height:52px;border:0!important;border-radius:11px;padding:9px 2px;background:#151218;box-shadow:none}.timeline-records .record-stamp{display:block;font-size:12px;color:#a698a5;font-weight:600;align-self:start;line-height:24px;font-variant-numeric:tabular-nums}.timeline-records .record-message{position:relative;padding-left:18px;font-size:15px;line-height:1.6}.timeline-records .record-message:before{content:'';position:absolute;left:0;top:8px;width:8px;height:8px;background:#9ce8ed;border-radius:50%;box-shadow:0 0 0 3px #9ce8ed15}.timeline-records .record-clock{display:none}.due-history-group .event.record-card{border:0;border-radius:15px;background:#29202b;min-height:70px;padding:15px}.due-history-group .record-message{font-size:15px}.due-history-group .record-clock{font-size:14px}
+ #memoPanel.memo-view{padding:18px;border-radius:16px;border-color:#493444;background:#221b26}.memo-view .voiceButtons{display:flex;flex-wrap:wrap;gap:8px}.memo-view .voiceButtons button{flex:1;font-size:13px;min-height:44px;padding:10px 12px}
+ body[data-mobile-tab="profile"] .phone-profile{padding-top:8px}.phone-profile>h1{display:none}.phone-profile .tuotuoHero{min-height:0;height:auto;margin:8px 0 22px;padding:20px;border-radius:20px;background:#241b27;border:1px solid #433040;box-shadow:none;display:block}.phone-profile .heroCopy{padding:0;max-width:none}.phone-profile .heroCopy>.eyebrow{color:#b6a5b5;font-size:9px;letter-spacing:2px;margin-bottom:8px}.phone-profile .heroCopy h1{font-family:Impact,'Arial Black',sans-serif;color:#ff2ba5;font-size:42px;letter-spacing:-1px;line-height:1.05;margin:0;transform:none}.phone-profile .heroCn{color:#f7eaf2;font:650 14px/1.5 system-ui,sans-serif;letter-spacing:0;margin-top:10px}.phone-profile .heroCopy>p,.phone-profile .heroActions,.phone-profile .heroScene,.phone-profile .heroRibbon,.phone-profile .tuotuoHero>.date{display:none}.phone-menu{border:1px solid #392b38;border-radius:18px;background:#221b26}.phone-menu button{background:#221b26;min-height:62px;padding:17px 18px;font-size:15px;border-color:#382b38}.phone-menu button:last-child{border:0}.phone-menu span{color:#887487;font-size:20px}
+ body[data-mobile-tab="search"] main{padding-inline:20px}body[data-mobile-tab="search"] .phone-search{height:calc(100dvh - 152px - env(safe-area-inset-bottom,0px));margin:0 -20px}
+}
+@media(prefers-reduced-motion:reduce){.record-swipe>.record-card{transition:none}}
+
+/* Keep the original plush companion beside the compact mobile profile logo. */
+@media(max-width:760px){
+ .phone-profile .tuotuoHero{position:relative;min-height:146px;overflow:hidden}
+ .phone-profile .heroCopy{padding-right:clamp(86px,27vw,108px);min-width:0}
+ .phone-profile .heroCopy h1{white-space:nowrap}
+ .phone-profile .heroScene{display:block;position:absolute;inset:auto 12px auto auto;top:50%;width:clamp(80px,26vw,104px);height:auto;aspect-ratio:542.5/725;transform:translateY(-50%);transform-origin:center;background:none;border:0;border-radius:0;overflow:visible;z-index:1}
+ .phone-profile .heroScene .mascotButton{position:absolute;inset:0;width:100%;height:100%;min-height:0;padding:0;margin:0;border:0;border-radius:0;background:none;box-shadow:none;transform:none}
+ .phone-profile .heroScene .heroMascot.mascot{position:relative;inset:auto;display:block;width:100%;height:100%;max-height:none;aspect-ratio:542.5/725;transform:none;filter:drop-shadow(0 5px 7px #0003)}
+ .phone-profile .heroScene .sceneLabel,.phone-profile .heroScene .heroSticker,.phone-profile #mascotGreeting{display:none}
+}
+@media(max-width:360px){
+ .phone-profile .heroCopy h1{font-size:36px}
+ .phone-profile .heroCn{font-size:12px}
+}

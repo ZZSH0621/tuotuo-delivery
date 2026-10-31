@@ -1,0 +1,19 @@
+.layoutToolbar{position:fixed;z-index:150;inset:0 0 auto;height:52px;background:#171419f5;border-bottom:1px solid #614457;display:flex;align-items:center;justify-content:center;gap:16px;padding:6px 16px;color:#e9dce6;font-size:11px;backdrop-filter:blur(12px)}
+.layoutToolbar button{background:#ff2ba5;color:#171717;border:1px solid #ff8dcc;border-radius:9px;padding:8px 15px;font-size:12px;font-weight:750;min-height:36px;cursor:pointer}
+.layoutToolbar button:focus-visible{outline:3px solid #92e5eb;outline-offset:2px}
+@media(min-width:761px){body{padding-top:52px}.sidebar{top:52px;height:calc(100dvh - 52px)}#screenSaver,.tuotuoIntro{top:52px;height:calc(100dvh - 52px)}dialog{max-height:calc(100dvh - 80px)}}
+@media(max-width:760px){.layoutToolbar{display:none}}
+html.phonePreview{background:#0e0c10;scroll-padding-top:64px}
+html.phonePreview body{width:390px;max-width:100%;margin:0 auto;padding-top:52px;box-shadow:0 0 0 1px #614457,0 0 80px #ff2ba51a;min-height:100dvh;overflow-x:clip}
+html.phonePreview .sidebar{height:auto;top:auto}
+html.phonePreview main{width:100%;min-width:0}
+html.phonePreview .layoutToolbar{width:100%;font-size:11px}
+html.phonePreview #screenSaver,html.phonePreview .tuotuoIntro{left:50%;right:auto;top:52px;width:390px;max-width:100%;height:calc(100dvh - 52px);transform:translateX(-50%);overflow-y:auto}
+html.phonePreview dialog{width:358px;max-width:calc(100% - 32px);max-height:calc(100dvh - 84px);overflow-y:auto}
+html.phonePreview #activeAlarmBar{left:50%;right:auto;width:362px;max-width:calc(100% - 28px);transform:translateX(-50%)}
+html.phonePreview #toast{left:50%;right:auto;width:350px;max-width:calc(100% - 40px);transform:translateX(-50%)}
+html.phonePreview .circleAck{white-space:nowrap;font-size:15px}
+@media(prefers-reduced-motion:reduce){.layoutToolbar button{transition:none}}
+html.phonePreview .layoutToolbar button{background:#ff2ba5;color:#171717;border:1px solid #ff8dcc;border-radius:9px;padding:8px 15px;font-size:12px;font-weight:750;min-height:36px}
+html.phonePreview .phone-nav{left:50%;right:auto;width:390px;max-width:100%;transform:translateX(-50%)}html.phonePreview body[data-mobile-tab="record"] main{height:calc(100dvh - 52px)}html.phonePreview body[data-mobile-tab="record"] .phone-home{height:calc(100dvh - 192px - env(safe-area-inset-bottom,0px))}
+html.phonePreview .due-notification{left:max(16px,calc(50% - 179px));top:68px;width:358px;max-width:calc(100% - 32px)}

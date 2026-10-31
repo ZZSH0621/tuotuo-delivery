@@ -1,0 +1,3 @@
+#mobileASRLayer{position:fixed;inset:0;z-index:140;display:grid;grid-template-rows:44px minmax(0,1fr);background:#171419;color:#fff7ef}#mobileASRLayer iframe{width:100%;height:100%;border:0;background:#171419}.asrOverlayClose{background:#302333;color:#fff7ef;font:600 12px system-ui;border-bottom:1px solid #614457;padding:8px 16px;cursor:pointer}.asrOverlayClose:focus-visible{outline:3px solid #92e5eb;outline-offset:-4px}
+@media(min-width:761px){#mobileASRLayer{top:52px}}
+html.phonePreview #mobileASRLayer{left:50%;right:auto;width:390px;max-width:100%;transform:translateX(-50%);top:52px}

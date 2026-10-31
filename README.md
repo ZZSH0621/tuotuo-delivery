@@ -1,31 +1,20 @@
 # TUOTUO 妥妥 · 网页源码交付
 
-照护工作辅助网页 Demo，仅用于虚构资料和原型演示，不是电子病历、医疗器械或唯一可靠提醒渠道。
+## 当前版本：v49
 
-## 当前版本：v22
+- [在线演示](https://nurse-notes-demo.wiggly-char-1989.chatgpt.site/legacy/?v=49)
+- [查看最新源码](./source/)
+- [下载最新公共源码 ZIP](./tuotuo-latest-public-source.zip)
+- [v49 公共交付说明](./TUOTUO-v49-PUBLIC-HANDOFF.md)
+- [逐文件清单](./TUOTUO-LATEST-PUBLIC-FILE-MANIFEST.json)
+- [ZIP SHA-256 与归档校验](./TUOTUO-LATEST-PUBLIC-ARCHIVE-CHECK.json)
 
-- [在线演示](https://nurse-notes-demo.wiggly-char-1989.chatgpt.site/)
-- **[下载 v22 公开源码包](./tuotuo-v22-public-source.zip)**（打开文件页后点击 Download raw file）
-- [v22 交付说明](./TUOTUO-v22-PUBLIC-HANDOFF.md)
-- [v22 逐文件清单](./TUOTUO-v22-PUBLIC-FILE-MANIFEST.json)
-- [v22 归档校验](./TUOTUO-v22-PUBLIC-ARCHIVE-CHECK.json)
-- [完整本地模型接手手册](./TUOTUO-LOCAL-MODEL-HANDOVER.md)（核对其页首版本；旧版本描述以 v22 交付说明为准）
+最新网页源码已同步，包含手机界面、两种录音入口、分区留痕、定时提醒、左滑删除、知识库搜索代码和固定位置的录音按钮。
 
-2026-10-31 已发布 v22，源提交 `7acc3f2e5535647e61864bf29514d72570274225`。保留公开首页入口修复，新增单一百炼自填密钥语音界面、任务/备忘录分别回填及桌面/390px 手机竖屏切换；旧语音面板不再加载。
-
-每个人使用自己的百炼密钥和额度，录音结束不会自动上传，须确认本轮目的地和费用再发送。没有内置或共享 API key；生产需要正常登录。站内当前每用户每分钟3次、每天最多10次预留，不是服务商账单硬上限。
-
-生产非秘密后端配置已启用并核实 D1 两表，页面与登录入口实际检查可达。99 项测试、TypeScript、构建、独立安全与竖屏界面检查通过。**真实个人密钥、麦克风及付费转写仍未实测**，不能把发布成功等同识别验收。
-
-## 使用源码包
-
-v22 ZIP **直接包含源码，没有外层目录**。解压到新文件夹，按交付说明安装 Node.js 和依赖并启动，不能双击 HTML 获得完整服务。公开包的独立部署配置默认关闭、使用占位标识，与当前已配置的生产站点不同。
-
-包内有代码、角色图片、六段音效和测试。未附许可尚未核实的转换模型权重或 FLEURS 音频，不是完整离线语音包。旧语音实现仅作历史开发参考，不在当前界面显示。第三方 notices 保留；本仓库未额外授予整项目或用户素材的统一开源许可。
-
-ZIP：9,708,347 字节，207 文件。
-SHA-256：`8b17ee6f287abcd267cc8c6f1d9835e2f46f1cc9b448bd2696dc98f9a908c3b2`
+公共版不含实际 API 密钥、教材全文/扫描页或可选本地模型资源。密钥使用服务端 Secret 配置；公共版本与本地完整交付包的资源范围不同。部署、配置和已知边界请阅读公共交付说明。
 
 ## 历史交付
 
-`tuotuo-latest-public-source.zip` 与 `TUOTUO-LATEST-*` 是此前 v20 快照，文件名里的 latest 已不代表当前版本；保留供核验与回滚，不再作为新接手入口。不要混用 v20 的接口契约与 v22。
+v22 ZIP、v22 说明和旧本地模型接手手册保留供追溯，以 v49 说明作为当前入口。`tuotuo-latest-public-source.zip` 与 `TUOTUO-LATEST-*` 现已统一更新为 v49。
+
+第三方许可声明保留在源码中；未额外授予整项目或用户素材统一开源许可。
