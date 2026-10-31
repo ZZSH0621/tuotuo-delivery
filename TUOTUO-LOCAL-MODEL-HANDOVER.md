@@ -1,67 +1,71 @@
 # 妥妥 TUOTUO 本地模型接手手册
 
-更新日期：2026-10-31 UTC。对象：没有本项目聊天历史、需要在自己电脑上阅读、运行、修改和验证项目的开发者或本地模型。
+更新日期：2026-10-31 UTC，适用主版本 **v22**。对象：没有本项目聊天历史、需要在本地理解、运行、修改和验证项目的开发者或模型。本文件沿用原有同名交接文档身份，新版内容取代旧v20接口说明；旧ZIP保留历史，不覆盖。
 
-本手册交接的是一个**只允许虚构资料的照护工作原型**，不是医疗器械、电子病历、医嘱系统或可靠临床闹钟。已有内容包括工作台、人工核对后建任务、提醒与完成留痕、每日总结、备忘、候选知识、角色与音效、桌面及390px布局预览、本地语音加载代码，以及默认关闭的 OpenAI 个人密钥转写接口。**公开包没有本地识别模型权重；没有完成真实 OpenAI 调用验收；没有训练出本项目专属模型。**
+这是**只允许虚构资料的照护工作原型**，不是医疗器械、电子病历、医嘱或可靠护理闹钟。现有模块包括任务人工核对、提醒/知悉/完成留痕、总结、备忘、26条候选知识、TUOTUO角色/开场/睡脸屏保、六音效/音量、390px布局，以及**单一百炼个人key语音入口**。生产已启用受认证保护的API，但**没有完成真实本人key、音频、费用和识别结果验收**。
 
-本文中的源码路径，除专门标注“交付仓库根目录”外，均相对于 ZIP 解压后的 `tuotuo-public-source/`。本文只说明现状、证据与接手步骤，不授权自动开启计费服务、公开额外数据、部署或更改系统安全设置。
+本文源码路径均相对于新版ZIP的解压项目根。推荐自行新建 `tuotuo-public-source/`作为解压目录；**v22 ZIP内容直接在归档根，和旧v20有外层目录不同**。不要把只含交付文件的GitHub根当应用根运行npm。
 
-快速定位：运行安装看第3节，工作台行为看第4节，数据结构看第5节，本地语音看第6节，BYOK接口看第7节，知识与素材看第8节，测试/入口补丁看第9节，问题和验收看第10–11节，回滚/模型接手提示词看第12–13节。完整文件索引和来源表在附录。
+快速定位：安装和架构第3节，工作台第4节，存储第5节，当前语音/历史代码第6节，API第7节，知识素材第8节，证据第9节，问题与验收第10–11节，回滚与接手提示词第12–13节；完整文件索引、20来源表在附录。
 
-## 1 先认清交付物和版本
+## 1 交付物和版本状态
 
-### 1.1 三种状态必须分开
+### 1.1 当前主线与历史分支
 
-| 对象 | 截至本次交接的状态 | 不能推导的结论 |
+| 对象 | 状态 | 不可推导 |
 | --- | --- | --- |
-| [GitHub 交付仓库](https://github.com/ZZSH0621/tuotuo-delivery) | 已创建并公开交付 ZIP、短说明、manifest、归档核验文件；完整源文件目前主要在 ZIP 内 | 不是“仓库根已有可直接 npm 运行的源码”；不是已经部署 |
-| 源码基线 | v20 已在原托管流程保存，源提交 `aa61b5dc3a4f4944ac30105b121794a04bc4eb7c`；公开候选另外做脱敏与排除 | 公开候选不是原提交逐字节副本；该提交也不必存在于新 GitHub 仓库历史 |
-| [现有生产演示](https://nurse-notes-demo.wiggly-char-1989.chatgpt.site) | 已从v18单独部署v21入口修复，公开工作台可打开；v20功能未部署，API仍关闭 | v21是v18加根入口修复，不是v20完整功能上线；详见9.3 |
+| [GitHub交付仓库](https://github.com/ZZSH0621/tuotuo-delivery) | 新版v22 ZIP及三份配套文件已上传并下载回验；本同名手册随本轮更新 | 仓库公开不自动配置独立部署；交付包根不是直接npm工程 |
+| v22功能源 | 提交 `7acc3f2e5535647e61864bf29514d72570274225`，已核对HEAD；继承公开根修复、加入390px和新百炼UI | 公开候选另外脱敏/可移植化，不是原提交逐字节归档 |
+| [生产演示](https://nurse-notes-demo.wiggly-char-1989.chatgpt.site) | v22已于2026-10-31 04:45:56 UTC部署，public；API经明确配置启用，表存在 | 不等于登录账户和真实收费ASR成功；当前包不携带生产secret/私有ID |
+| 历史v21 | 提交 `0539ced58ad138c19e118bf6ee2059727664e068`，基于v18仅修公开根入口 | 不是当前完整功能；v22已包含其修复，无需再套旧补丁 |
+| 历史v20公开包 | 源基线 `aa61b5dc3a4f4944ac30105b121794a04bc4eb7c`，旧OpenAI-only/双语音UI候选 | 不是当前API契约；不要拿旧默认模型/字段/超时继续接手 |
 
-生产入口修复在2026-10-31 04:21:51 UTC完成，修复提交 `0539ced58ad138c19e118bf6ee2059727664e068`；保留的源码ZIP仍是此前的v20公开候选。**生产分支与交付源码分支已分叉，接手第一步是明确目标分支。**
+新包的默认配置**关闭API**，生产现状**已启用API**，这是有意的环境隔离，不是文档矛盾。开发/托管记录里“API未配置”“98测试待最终重跑”等早期状态，均须结合其时间；本手册以当前代码、新公开候选99测试及最终部署证据为准。
 
-GitHub 根目录短说明及外部 manifest 已在发布后更新发布状态；ZIP 内的 `README.md`、`PUBLIC-CANDIDATE.md`、`PUBLIC-FILE-MANIFEST.json` 和部分许可证说明仍保留**打包时未发布的历史快照**。遇到“unpublished”或 `github_published:false`，先判断文件属于哪个快照，不要据此把已公开仓库说成尚未公开。不要为了只改状态文案而偷偷重打并覆盖已核验 ZIP。
+### 1.2 新版交付文件与完整性
 
-### 1.2 交付仓库根目录文件
-
-| 文件 | 用途 |
+| 交付仓库根文件 | 用途 |
 | --- | --- |
-| `tuotuo-latest-public-source.zip` | 当前公开源码和允许保留的素材；解压根为 `tuotuo-public-source/` |
-| `TUOTUO-LATEST-PUBLIC-HANDOFF.md` | 短交接、版本与已验边界 |
-| `TUOTUO-LATEST-PUBLIC-FILE-MANIFEST.json` | 对外逐文件 SHA-256 与公开化差异；代码文件哈希与包内清单对应 |
-| `TUOTUO-LATEST-PUBLIC-ARCHIVE-CHECK.json` | ZIP 大小、SHA-256、CRC 核验信息 |
-| `TUOTUO-LOCAL-MODEL-HANDOVER.md` | 本完整接手手册；不在先前已固定的 ZIP 哈希范围内 |
+| `tuotuo-v22-public-source.zip` | 新版公开源码，归档根直接有package.json等项目文件 |
+| `TUOTUO-v22-PUBLIC-HANDOFF.md` | 新版简要状态/运行说明；包内同内容为PUBLIC-CANDIDATE.md |
+| `TUOTUO-v22-PUBLIC-FILE-MANIFEST.json` | 新版相对源提交差异及逐文件SHA-256；包内PUBLIC-FILE-MANIFEST.json不自哈希 |
+| `TUOTUO-v22-PUBLIC-ARCHIVE-CHECK.json` | 新版ZIP大小、SHA、CRC、文件数 |
+| `TUOTUO-LOCAL-MODEL-HANDOVER.md` | 本同名完整接手手册，不在固定ZIP的自校验范围 |
 
-当前 ZIP：**9,699,203 字节**；SHA-256：
+新版ZIP：**9,708,347字节**，SHA-256：
 
 ```text
-82a2b4dd2a843ee0e578ce54061aba4049288eef020ed381eeaeef74ab354bb1
+8b17ee6f287abcd267cc8c6f1d9835e2f46f1cc9b448bd2696dc98f9a908c3b2
 ```
 
-ZIP 共195个文件条目；包内 manifest 列出194个文件，不自哈希。编写本文时已逐个复算公开候选的194个哈希，全部一致；交付过程还已下载 GitHub 实际 ZIP 回验。**哈希说明完整性与同一性，不说明医学有效性、许可完备性或没有所有可能的漏洞。**
+新版共207文件，manifest列206项不自哈希。哈希说明同一性与完整性，不证明医学有效、许可完备或没有任意安全漏洞。包内说明中的“本次打包未上传”只陈述打包动作范围，最终是否已在GitHub发布应看仓库实际记录，不把生产部署/打包/文件上传混为一谈。
 
-原始 v18 私有三份分包与含权重的完整包不属于公共仓库附件。本公开版没有恢复内部部署 ID、私有文档或 Space 引用、工作机路径、转换权重、词表或 FLEURS 音频；后续模型不得从其他历史包自行补回。
+历史 `tuotuo-latest-public-source.zip` 仍为9,699,203字节、SHA `82a2b4dd2a843ee0e578ce54061aba4049288eef020ed381eeaeef74ab354bb1`，195文件、外层 `tuotuo-public-source/`，它不覆盖也不升级为新版。旧 `TUOTUO-LATEST-*` 文件描述该历史归档，主线接手用上表明确的v22文件名。
 
-## 2 产品目标和不得破坏的约束
+用户原上传包、`.env.local`、个人key、原私有部署状态、旧独立回滚备份、转换权重、FLEURS示例均不加入新版公开交付。不得因“完善交付”从原始包恢复敏感文件。
 
-用户要的是有 TUOTUO 角色陪伴感的深色照护工作台：把描述变成可核对的工作草稿，把“到时间”“已知悉”“真的完成了工作”分开，并保留浏览器内的操作记录。语音是输入辅助，不是临床决策者。
+## 2 产品目标和必须保持的约束
 
-1. **虚构资料与人工核对**：床号、姓名、事项、提醒时间必须核对。不能推断药物皮试判读时间、禁食时间、观察时间、医嘱或诊疗结论；没有就保持空白或追问。
-2. **确认不等于完成**：点“知悉并停止当前提醒”只停止当前告警并记 `ack`；只有完成表单才记 `done`。不要把屏保退出、音效结束、语音确认或收到 API 文本计为已完成。
-3. **两条主要语音入口**：页面导航展示独立本地识别与 API 识别；旧浏览器本地语音对话代码还在，不等于主导航增加第三个入口。
-4. **本地优先但不能冒称完整离线**：浏览器本地能力不足或缺模型时应明确失败并保留文字输入，不悄悄使用浏览器云端识别或付费服务。
-5. **BYOK 只用本人 key**：用户手动输入个人 OpenAI API key、明确目的地与模型、同意可能收费后才发送；不内置共享 key，不用站点拥有者 key 兜底，不开放任意代理/URL。
-6. **展示增强不改业务**：开场、睡脸屏保、电量、390px切换均应保持已有任务、输入、提醒和完成数量；切换不是刷新、iframe 或第二套应用。
-7. **声音与硬件分开**：六条 motor MP3 是模拟震动的音效；`navigator.vibrate` 才是设备震动请求。网页不能保证后台、锁屏、关闭浏览器后可靠提醒。
-8. **不扩大公开范围**：公开可见不是整项目统一自由授权。保留第三方 notices，不添未经批准的许可证，不发布真实患者资料、密钥、OTP、用户邮箱或私有对话。
+TUOTUO用深色角色工作台辅助记事和核对；不代替医嘱/临床判断。语音只辅助输入，提醒到时、已知悉、真实工作完成分开。
+
+1. 仅虚构资料；床号/姓名/项目/起点/时间缺失就追问或留空，不推断皮试、禁食、观察等医学时长。
+2. 知悉只设ack并停当前提醒，完成必须经完成表单设done；语音采用、音轨结束、关闭屏保都不是完成。
+3. 当前只有一个百炼语音入口；旧本地/browser/OpenAI UI不加载。服务端保留OpenAI协议兼容，不等于UI仍提供它。
+4. 录音和导入只生成本机预览；只有用户确认本轮目标/个人费用并手动发送才上传。没有自动发送、自动重试或地域fallback。
+5. 本人key手填且不持久化，设置变更撤销同意，地域/workspace变化清key；不读环境文件取key、不用拥有者共享key兜底、不允许任意URL。
+6. 采用结果只追加任务输入或备忘草稿，不自动创建/保存；知识条目全部research_only，不自动计时。
+7. 展示层保持原任务/提醒；390px切换不重建工作台，语音是同源iframe覆盖层，关闭/告警能回原工作台。
+8. 六段音效不等于真实震动，Web提醒不保证后台/锁屏可靠；电量不可用就明确未知。
+9. 公开包缺旧模型不是训练成功/完整离线功能；不擅自补权重、患者资料、密钥、用户邮箱、私有标识或未核实授权素材。
+10. 真实计费调用、独立生产部署、远程数据库改动和新增公开范围需要另外明确授权；本手册不是自动执行授权。
 
 ## 3 从源码理解运行结构
 
 ### 从公开交付包开始
 
-以下命令对应**当前ZIP中的v20公开候选**。生产已单独部署v18基础上的v21入口补丁，见1.1和9.3；该补丁未写入此ZIP，API仍关闭。包内旧“尚未发布GitHub”文字是打包快照，不代表现在的仓库状态。
+以下命令对应**v22公开候选**。新版ZIP源码直接在归档根，解压到自己新建的tuotuo-public-source目录即可；生产已启用API，但此独立包默认关闭，不能照搬生产运行状态。
 
-当前 GitHub 仓库根目录是交付文件层，不是应用项目根目录；根目录没有可直接运行的 `package.json`。先下载或克隆仓库，再解压 `tuotuo-latest-public-source.zip`。本次已核查 ZIP 内共同顶层为 `tuotuo-public-source/`；应用根目录应同时包含 `package.json`、`package-lock.json`、`app/` 和 `public/`。未来若交付包变化，以 `tar -tf` 的实际列表为准，不要猜目录层级。
+当前 GitHub 仓库根目录是交付文件层，不是应用项目根目录；根目录没有可直接运行的 `package.json`。先下载或克隆仓库，再解压 `tuotuo-v22-public-source.zip`。本次已核查ZIP没有共同外层目录，归档根直接包含项目文件；应用根目录应同时包含 `package.json`、`package-lock.json`、`app/` 和 `public/`。未来若交付包变化，以 `tar -tf` 的实际列表为准，不要猜目录层级。
 
 #### 环境和依赖版本
 
@@ -83,12 +87,12 @@ git --version
 git clone https://github.com/ZZSH0621/tuotuo-delivery.git
 Set-Location tuotuo-delivery
 
-# 先查看，确认列表以 tuotuo-public-source/ 开头
-tar.exe -tf .\tuotuo-latest-public-source.zip | Select-Object -First 20
+# 先查看，应在归档根看到 package.json、public/、app/
+tar.exe -tf .\tuotuo-v22-public-source.zip | Select-Object -First 20
 
 # 使用新建目录，避免覆盖既有工作
-Expand-Archive -LiteralPath .\tuotuo-latest-public-source.zip -DestinationPath .\source-work
-Set-Location .\source-work\tuotuo-public-source
+Expand-Archive -LiteralPath .\tuotuo-v22-public-source.zip -DestinationPath .\tuotuo-public-source
+Set-Location .\tuotuo-public-source
 Get-Item .\package.json, .\package-lock.json
 
 npm.cmd run install:ci
@@ -96,7 +100,7 @@ npm.cmd run install:ci
 npm.cmd run dev
 ```
 
-若没有 Git，可以从公开仓库网页下载 `tuotuo-latest-public-source.zip`，在其所在目录从 `tar.exe -tf` 一行继续；不要把 GitHub 的“Download ZIP”外层仓库包误认为应用源码内层 ZIP。任何一步报错，应先处理该步，不能继续把后续失败解释成应用故障。
+若没有 Git，可以从公开仓库网页下载 `tuotuo-v22-public-source.zip`，在其所在目录从 `tar.exe -tf` 一行继续；不要把 GitHub 的“Download ZIP”外层仓库包误认为应用源码内层 ZIP。任何一步报错，应先处理该步，不能继续把后续失败解释成应用故障。
 
 #### macOS 和 Linux
 
@@ -109,12 +113,12 @@ git clone https://github.com/ZZSH0621/tuotuo-delivery.git
 cd tuotuo-delivery
 
 # 先核实 ZIP 顶层结构
-tar -tf tuotuo-latest-public-source.zip | head -20
+tar -tf tuotuo-v22-public-source.zip | head -20
 
-# source-work 应为新目录；若已存在，另选目录，不覆盖已有修改
-mkdir source-work
-unzip tuotuo-latest-public-source.zip -d source-work
-cd source-work/tuotuo-public-source
+# tuotuo-public-source 应为新目录；已存在则另选，不覆盖已有修改
+mkdir tuotuo-public-source
+unzip tuotuo-v22-public-source.zip -d tuotuo-public-source
+cd tuotuo-public-source
 ls package.json package-lock.json
 
 npm run install:ci
@@ -122,7 +126,7 @@ npm run install:ci
 npm run dev
 ```
 
-部分 Linux 系统的 GNU `tar` 不能读取 ZIP；如果 `tar -tf` 报格式错误，用 `unzip -l tuotuo-latest-public-source.zip | head -25` 查看同一包的目录，不要据此认定 ZIP 已损坏。macOS 通常自带 ZIP 解压工具；缺少 `unzip` 时，先通过该系统认可的软件安装方式补齐，或使用系统图形解压器，然后进入真实应用根目录。
+部分 Linux 系统的 GNU `tar` 不能读取 ZIP；如果 `tar -tf` 报格式错误，用 `unzip -l tuotuo-v22-public-source.zip | head -25` 查看同一包的目录，不要据此认定 ZIP 已损坏。macOS 通常自带 ZIP 解压工具；缺少 `unzip` 时，先通过该系统认可的软件安装方式补齐，或使用系统图形解压器，然后进入真实应用根目录。
 
 #### 解压前后核验
 
@@ -130,14 +134,14 @@ npm run dev
 
 ```powershell
 # Windows PowerShell
-Get-FileHash .\tuotuo-latest-public-source.zip -Algorithm SHA256
+Get-FileHash .\tuotuo-v22-public-source.zip -Algorithm SHA256
 ```
 
 ```sh
 # macOS
-shasum -a 256 tuotuo-latest-public-source.zip
+shasum -a 256 tuotuo-v22-public-source.zip
 # Linux
-sha256sum tuotuo-latest-public-source.zip
+sha256sum tuotuo-v22-public-source.zip
 ```
 
 进入解压应用根后，可用已经安装的Node逐一检查包内manifest，不依赖npm包、不修改文件：
@@ -146,15 +150,15 @@ sha256sum tuotuo-latest-public-source.zip
 node --input-type=module -e "import fs from 'node:fs';import {createHash} from 'node:crypto';const m=JSON.parse(fs.readFileSync('PUBLIC-FILE-MANIFEST.json','utf8'));const bad=Object.entries(m.files).filter(([p,h])=>!fs.existsSync(p)||createHash('sha256').update(fs.readFileSync(p)).digest('hex')!==h).map(([p])=>p);console.log({checked:Object.keys(m.files).length,bad});process.exitCode=bad.length?1:0"
 ```
 
-期望 `checked:194`、`bad:[]`。后续应用入口补丁或有意修改代码后出现相应哈希差异是正常现象，应记录新变更，不篡改基线清单来冒充原包。
+期望 `checked:206`、`bad:[]`。后续有意修改代码后出现相应哈希差异是正常现象，应记录新变更，不篡改基线清单来冒充原包。
 
 #### 开发预览与构建预览
 
 `npm run dev` 在 portable 模式使用 Vinext 开发服务器，默认从 **5173** 端口启动。以终端实际打印的地址为准，通常是 `http://localhost:5173`；保持仅本机回环访问，不为省事绑定到公开网卡。需要另一个端口时使用 `npm run dev -- --port 5174`（PowerShell 用 `npm.cmd`）。
 
-- 访问 `/`：`app/page.tsx` 先要求登录，再跳转到 `/legacy/index.html`。portable 开发模式提供**仅回环请求有效的模拟登录**，可在浏览器直接打开 `/signin-with-chatgpt?return_to=/`。这是开发身份，不是真实 ChatGPT 账户认证。
-- 访问 `/legacy/index.html`：直接查看静态工作台。**首页的登录跳转不等于所有静态资源都受认证保护**，因此不要在页面、图片或 JavaScript 中放置秘密或真实患者资料。
-- API 默认关闭、缺少本地模型文件，都是交付边界，不是执行安装命令就会自动修好的故障。界面能打开不代表云端转写已连接或本地语音识别可运行。
+- 访问 `/`：`app/page.tsx`直接跳转到 `/legacy/index.html`，浏览演示无需登录。API身份仍独立；portable dev在回环请求提供模拟登录，可在浏览器打开 `/signin-with-chatgpt?return_to=/asr/`。它不是真实ChatGPT认证，不能用于生产。
+- 访问 `/legacy/index.html`：直接查看静态工作台。**公开静态工作台不受API认证保护**，因此不要在页面、图片或 JavaScript 中放置秘密或真实患者资料。
+- 此独立公开包API默认关闭，当前界面是百炼语音而非旧本地模型入口。安装不会配置托管身份/数据库/计费；页面可录音预览不代表已经可以发送。旧模型权重仍不附带。
 
 停止开发服务器后，在同一应用根目录构建并运行本地构建预览：
 
@@ -206,15 +210,15 @@ npm.cmd run build
 
 HTTP 请求
   → worker/index.ts → vinext/server/fetch-handler
-      ├─ / → app/page.tsx → 登录检查 → /legacy/index.html
+      ├─ / → app/page.tsx → 公开重定向 → /legacy/index.html
       ├─ /api/session → app/api/session/route.ts
       ├─ /api/transcriptions → app/api/transcriptions/route.ts
       └─ 静态工作台与资源 → public/
 
 工作台 public/legacy/index.html
   → public/app.js 等本地任务与提醒逻辑
-  → public/local-asr-ui.mjs → 浏览器本地识别实验代码
-  → public/api-voice-ui.mjs → /api/session 与 /api/transcriptions
+  → public/asr-integration.mjs → 同源 /asr/ iframe
+  → public/asr/app.js → api-request.mjs → /api/session 与 /api/transcriptions
 ```
 
 `public/legacy/index.html` 设置了 `<base href="/">`，所以其中 `app.js`、`style.css` 等相对 URL 实际从站点根路径加载。不要直接双击 HTML、随意移动它，或部署到子路径后仍假定所有资源路径正确；这需要 HTTP 服务和对应路径验证。页面业务改动通常从 `public/` 入手，而不是另写一套 React 工作台后假称已替换现有页面。
@@ -223,14 +227,15 @@ HTTP 请求
 
 | 路径 | 当前职责与修改注意事项 |
 | --- | --- |
-| `app/page.tsx`、`app/layout.tsx` | 首页认证入口、静态工作台跳转、页面元信息；不是主要工作台组件树。 |
+| `app/page.tsx`、`app/layout.tsx` | 公开首页、静态工作台跳转、页面元信息；不是主要工作台组件树。 |
 | `app/chatgpt-auth.ts` | 读取托管层注入的可信身份头并构造登录/退出路径。不能把该 helper 当成独立身份验证服务。 |
 | `app/api/session/route.ts` | 返回认证、后端就绪和拥有者标记；就绪状态检查运行时配置及两张配额表。 |
-| `app/api/transcriptions/route.ts` | 默认关闭的转写入口；组合认证、运行时配置、D1 配额、音频校验与上游传输。 |
+| `app/api/transcriptions/route.ts` | 按独立运行配置决定启用的转写入口；组合认证、运行时配置、D1 配额、音频校验与上游传输。 |
 | `public/legacy/index.html`、`public/app.js`、`public/style.css` | 现有工作台 DOM、主业务和基础外观。 |
 | `public/tuotuo*`、`public/sounds.js`、`public/memos.js`、`public/knowledge.js` | 品牌角色与开场、屏保、竖屏预览、音效、备忘和知识展示。更改原样式后注意竖屏派生样式同步。 |
-| `public/api-*.mjs` | API 模型白名单、录音、请求及 BYOK UI；不能仅凭 UI 中有选项就声称某模型账户可用。 |
-| `public/local-asr/`、`public/local-asr-ui.mjs` | 本地识别实验的加载、录音和推理代码。公开包缺少模型与示例素材；保留加载器不等于附带可用离线语音包。 |
+| `public/asr/`、`public/asr-integration.*` | 当前单一百炼语音UI、任务/备忘草稿回传和iframe生命周期。 |
+| `public/api-models.mjs`、`api-recorder.mjs`、`api-request.mjs`、`speech-endpoint.mjs` | 当前provider约束、本机采集/VAD和手动请求。`api-voice-ui.mjs`是未加载的旧面板。 |
+| `public/local-asr/`、`public/local-asr-ui.mjs` | 未启用的历史本地识别代码，缺模型/示例；当前仍复用local-asr/pcm-worklet.mjs采集PCM，不能整目录删除。 |
 | `server/` | API 运行时开关和站点 ID、配额规则、音频内容校验、转写处理；重要安全和成本边界在这里。 |
 | `db/`、`drizzle/` | D1/Drizzle 入口、真实两张配额表、生成的 SQL 迁移及元数据。这里不是护理任务云端数据库。 |
 | `migrations/0001_quota.sql` | 同类配额表的另一份重建 SQL；不要和 Drizzle 迁移重复执行，也不要把它自动推断为当前托管发布迁移入口。 |
@@ -241,9 +246,9 @@ HTTP 请求
 | `scripts/run-framework.mjs`、`scripts/install-ci.mjs` 等 | profile 选择、锁定安装和启动构建封装。普通本地开发先用这些入口，不要跳过后再报告可复现。 |
 | `.openai/hosting.json`、`vite.config.ts` | 托管声明与本地 Cloudflare 绑定模拟。当前声明 `DB`，R2 未启用；Vite 内本地数据库 ID 是占位值，不是可发布的生产资源配置。 |
 | `tests/` | 单元、规则、安全边界与资源保持检查；不能替代浏览器、真机和生产联调。 |
-| `examples/d1/` | 可选starter示例：`db/schema.ts`定义notes，`app/api/notes/route.ts`示例GET/POST；不在当前根app路由树中，不能声称已部署`/api/notes`或已同步备忘。 |
+| `examples/d1/` | 可选starter示例：`db/schema.ts`定义notes，`examples/d1/app/api/notes/route.ts`示例GET/POST；不在当前根app路由树中，不能声称已部署`/api/notes`或已同步备忘。 |
 
-`dist/`、`node_modules/`、`.vinext/`、`.wrangler/`、`.sites-runtime/` 是构建、依赖或本机运行状态，不是要提交的源代码。不要将本机 cookie、数据库状态、安装缓存或 `.env*` 一起打进公开 ZIP。
+`dist/`、`node_modules/`、`.vinext/`、`.wrangler/`、`.sites-runtime/`是构建、依赖或运行状态，不在本包。新包另有轻量生成类型声明 `.next/types/routes.d.ts` 和 `next-env.d.ts`，已列入manifest；因此不应泛称完全没有任何生成文件。这两项不是可运行构建产物。不要将本机 cookie、数据库状态、安装缓存或 `.env*` 一起打进公开 ZIP。
 
 #### 数据库与过时模板说明
 
@@ -267,7 +272,7 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 2. `runtimeConfig(env)` 读取 `API_TRANSCRIPTION_ENABLED`、`API_EXPECTED_ORIGIN`、两个预算值和 `env.DB`。
 3. `/api/session` 另外读取 `SITE_OWNER_USER_ID`。
 
-当前自编 `scripts/sites-env.mjs` 是工具日志和状态路径初始化器，**不是业务 dotenv 加载器**；`vite.config.ts` 也没有把这些业务值显式映射到 `vars`。不能仅凭 `.env` 文件存在，便宣称它已进入 Cloudflare Worker 的运行时绑定。独立部署或增加本地 API 测试时，先按实际使用的 Cloudflare/Vite/Wrangler 启动链验证变量加载方式和生成配置，再验证 `/api/session`；不能把客户端 `VITE_*` 变量作为秘密存储。普通静态预览无需填入这些生产配置。
+当前自编 `scripts/sites-env.mjs` 是工具日志和状态路径初始化器，**不是业务 dotenv 加载器**；`vite.config.ts` 也没有把这些业务值显式映射到 `vars`。不能仅凭 `.env` 文件存在，便宣称它已进入 Cloudflare Worker 的运行时绑定。独立部署或增加本地 API 测试时，先按实际使用的 Cloudflare/Vite/Wrangler 启动链验证变量加载方式和生成配置，再验证 `/api/session`；不能把客户端 `VITE_*` 变量作为秘密存储。普通静态预览无需填这些生产配置；当前生产已批准的非秘密值另见7.8，不等于允许复制生产身份或key。
 
 #### 启用服务前必须落实的事项
 
@@ -276,10 +281,10 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 - `API_EXPECTED_ORIGIN` 必须是精确 HTTPS origin，不能带路径或末尾斜杠；预算值必须为正的安全整数，且每请求最大预留额不大于每日预算。有效配置和存在 `DB.prepare` 只是开关条件，不等于真实上游、鉴权和数据库均已验收。
 - `SITE_OWNER_USER_ID` 是拥有者 UI 标记的比较值，不可替代身份验证或数据库授权策略；不要为演示伪造真实拥有者身份。
 - 托管平台负责 `/signin-with-chatgpt`、`/signout-with-chatgpt`、`/callback` 及身份头注入。普通静态托管或自行启动 Worker 不会自动获得这些能力。必须先有可信的认证入口，剥离客户端可伪造的 `oai-authenticated-user-*` 头，再由服务端认证层注入可信身份，或另行设计并验收完整认证方案。
-- **严禁把手工添加身份头、硬编码用户 ID、portable 模拟 cookie 或关闭认证当作生产登录方案。** 根页面有登录检查也不能推出所有 API 和资源都受保护。
+- **严禁把手工添加身份头、硬编码用户 ID、portable 模拟 cookie 或关闭认证当作生产登录方案。** 根页面公开也不意味着API可匿名调用；静态资源里不能放秘密。
 - 生产发布、开启 API、调用可能计费的服务、迁移远程数据库、恢复并再分发模型素材均应单独取得授权，并设置回退方案；这份公开源码交付本身没有授权自动执行这些动作。
 
-先保留 API 关闭，只完成本地代码和界面验证；只有上述边界落实并按验收计划逐项验证后，才讨论启用服务。不要在公开手册、提交、构建日志或截图中留下真实密钥、真实用户资料、私有服务标识或真实患者内容。
+对新的独立部署先保留API关闭，只完成本地代码和界面验证；只有上述边界落实并按验收计划逐项验证后，才讨论启用服务。不要在公开手册、提交、构建日志或截图中留下真实密钥、真实用户资料、私有服务标识或真实患者内容。
 
 ## 4 工作台各模块的真实行为
 
@@ -289,7 +294,7 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 
 `parseInput()` 只做窄规则提取：阿拉伯数字床号、`数字分钟后`、`示例患者甲/乙/丙/丁`、`测血压` 或 `皮试`。它不是通用 NLP，也不会自动识别人名、全部知识条目或临床语义。结果进入 `openConfirm()`：床号最长12、姓名30、事项80字符，时间输入的 HTML 范围1–10080分钟，必须勾人工核对。普通任务以**点击创建时的本机时间**起算。
 
-`testTask()` 是10秒前台提醒测试，床号 `TEST`，不是一分钟震动测试。界面还保留 `voiceDemo()` 的模拟文本填充逻辑，它没有录音或调用识别服务。主表单逻辑在 JavaScript 中检查时间有效且大于0；七天上界主要来自 HTML 约束，不能把浏览器表单约束误说成可信服务端业务校验。
+`testTask()` 是10秒前台提醒测试，床号 `TEST`，不是一分钟震动测试。源码仍保留 `voiceDemo()` 模拟填充函数，当前新百炼入口不调用它；它本身没有录音或调用识别。主表单逻辑在 JavaScript 中检查时间有效且大于0；七天上界主要来自 HTML 约束，不能把浏览器表单约束误说成可信服务端业务校验。
 
 ### 4.2 任务状态与留痕
 
@@ -324,7 +329,7 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 
 `public/memos.js` 按本地日期展示备忘；文本只存本浏览器。支持新增、编辑、软删除、恢复，**不建提醒，不计入完成数量**。编辑把旧文本写入 `history`；旧日期没有同样保存在历史里，不能说具备完整版本审计。软删除不是物理擦除，删除内容仍在 localStorage 中。
 
-备忘语音按钮将独立本地识别的目的地切到 `memo`；识别结果需要采用、编辑、勾核对后才能放入备忘编辑框，最后还须点击保存。API路线的现有“采用”只通向普通任务输入框，没有独立的API到备忘自动路由；用户若手工复制到备忘框，仍须另行保存。
+备忘语音按钮现调用 `showAPIRecognition('memo')`，使用同一个新百炼语音页面；真实文本经人工核对、采用、确认回传后只追加到备忘编辑框，不自动保存。任务目标则只追加主输入框，两个目标不相互替换。详情见第6节。
 
 ### 4.6 六条音效和音量
 
@@ -344,7 +349,7 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 
 ### 4.8 TUOTUO 开场动画
 
-`tuotuo-intro.js` 将 `TUOTUO妥妥` 拆为8个字符展示；1250ms开始收拢，2050ms锁定组合，3950ms结束主体，另有620ms离场。首次标签页会话播放，使用 sessionStorage 标记，可显式重播；支持跳过、Escape，尊重 `prefers-reduced-motion`。已有未知悉到时任务、屏保、模态框或活动语音时不开始；页面隐藏或屏保出现时退出。仅展示动画，不录音、不播音、不联网、不改变任务。不要把动画测试中的合成事件视为真实业务告警必然已接通。
+`tuotuo-intro.js` 将 `TUOTUO妥妥` 拆为8个字符展示；1250ms开始收拢，2050ms锁定组合，3950ms结束主体，另有620ms离场。首次标签页会话播放，使用 sessionStorage 标记，可显式重播；支持跳过、Escape，尊重 `prefers-reduced-motion`。已有未知悉到时任务、屏保、模态框或活动语音时不开始；页面隐藏或屏保出现时退出。仅展示动画，不录音、不播音、不联网、不改变任务。v22已真实派发告警事件并加入屏保观察兜底；合成事件测试仍不代表真实麦克风/上游取消已验。
 
 ### 4.9 桌面和390px竖屏切换
 
@@ -357,21 +362,17 @@ node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1
 ### 5.1 四条业务数据流
 
 ```text
-文字输入 → 窄规则提取 → 人工核对表单 → Task[] / localStorage
-     → 前台轮询 → 内存告警队列 → 知悉 ack（未完成）
-     → 完成表单 → done / doneAt / 追加日志 → 今日总结
+文字输入 → 窄规则提取 → 人工核对 → Task[] / localStorage
+     → 前台轮询 → 告警队列 → 知悉ack（未完成）→ 完成表单 → done/日志/总结
 
-本地音频 → 浏览器本地引擎或 WASM Worker → 暂定/最终文本
-     → 人工采用与核对 → 候选知识研究草稿或备忘编辑框
-     → 默认不计时；备忘需另行保存
+百炼语音页：本机录音或导入转换 → 本机预览（不上传）
+     → 本次设置/个人key/目的地费用同意 → 手动发送
+     → 认证/D1预留 → 指定官方百炼endpoint → 待核对真实文本
+     → 人工采用草稿 → 任务输入或备忘编辑框（不自动创建或保存）
 
-API 音频 + 本人 key + 白名单模型 + 本次同意
-     → 同源 /api/transcriptions → 可信登录身份 + D1配额
-     → 固定 OpenAI 地址 → 待核对文本 → 手工转入编辑区
-
-知识 JSON → 客户端候选检索 → 待补充研究草稿
-     → 不授予临床批准，不启动闹钟
+知识JSON → 名称/别名候选 → 待补充研究草稿（不计时）
 ```
+
 
 工作台任务、备忘、知识草稿**不会写入 D1**。D1只存 API 额度与请求幂等元数据。API 音频/密钥/结果没有本应用设计的服务器持久化；这不等于浏览器扩展、代理、宿主平台或第三方提供商绝无自身处理/日志，部署前须另审。
 
@@ -386,9 +387,10 @@ API 音频 + 本人 key + 白名单模型 + 本次同意
 | localStorage `care-motor-volume` | 字符串形式增益0–2 | 默认0.7，非0–200的原始滑条值 |
 | localStorage `tuotuo-layout-preview-v1` | `'portrait'` 或 `'desktop'` | 非敏感布局偏好 |
 | sessionStorage `tuotuo-intro-seen-v1` | `'1'` | 每标签页会话的开场已看标记 |
-| CacheStorage `nurse-asr-pinned-decoder-<sha256>` | 校验后的模型资源 Response | 非用户音频缓存；浏览器可能回收，不保证永久离线 |
+| sessionStorage `tuotuo-asr-handoff` | `{text,destination,createdAt}` | 独立/asr页人工采用草稿回传；读取即删除、仅接收小于5分钟、≤12000字符；不是key/音频 |
+| 历史CacheStorage `nurse-asr-pinned-decoder-<sha256>` | 历史本地ASR模型缓存 | 当前UI不启用，不代表新包附模型或缓存可用 |
 
-现有“清除本机演示数据”只清任务与知识草稿，**不清备忘、备忘历史、音量、音效映射、布局、开场标记或模型缓存**，也不是账户注销清理。想做全量擦除应先设计确认/导出及精确范围，不能在接手时无授权调用 `localStorage.clear()`。
+现有“清除本机演示数据”只清任务与知识草稿，**不清备忘、备忘历史、音量、音效映射、布局、开场标记、ASR草稿handoff或历史模型缓存**，也不是账户注销清理。想做全量擦除应先设计确认/导出及精确范围，不能在接手时无授权调用 `localStorage.clear()`。
 
 ### 5.3 实际记录结构
 
@@ -415,111 +417,107 @@ type ResearchDraft = {
 };
 ```
 
-加载任务/备忘/草稿时只有 JSON 解析和顶层数组判断，缺少逐字段强校验/版本迁移。手改、损坏或老版本数据可能使 `log`、`due` 等访问失败。暂存 `alarmQueue`、`noticed`、当前过滤/视图、录音 PCM、转写预览、API key、同意勾选等不在上述持久化对象里。
+加载任务/备忘/草稿时只有 JSON 解析和顶层数组判断，缺少逐字段强校验/版本迁移。手改、损坏或老版本数据可能使 `log`、`due` 等访问失败。`alarmQueue`、`noticed`、当前过滤/视图、录音PCM、普通转写预览、API设置/key/同意只在内存或DOM；独立页面人工采用文本另有上述sessionStorage交接例外。
 
 ### 5.4 跨用户边界是两套不同机制
 
 服务器配额用托管平台稳定用户 ID 与站点 ID 隔离；请求体不允许提交 `userId`。但是浏览器工作数据按**origin + 浏览器配置文件**共享 localStorage，并非按登录身份隔离；同一电脑同一浏览器换登录账户可能看到上一个账户的演示数据，另一设备又不会自动得到这些数据。屏保遮蔽不是用户权限。若将来需要多人使用或真实资料，必须先设计身份绑定、命名空间、授权、加密、迁移、删除和审计，不能只加一个登录页面便声称安全。
 
-## 6 三条语音路线不能混为一谈
+## 6 当前单一百炼语音界面和历史语音代码
 
-### 6.1 浏览器自带本地语言包路线
+### 6.1 当前入口与实际页面结构
 
-`voice-intake.mjs` 中的 `LocalVoice` 只接受无前缀 `SpeechRecognition`，要求安全上下文、`available({langs:['zh-CN'],processLocally:true})` 可用、实例能够明确设置 `processLocally=true`；不用 `webkitSpeechRecognition` 或云端兜底。语言包可下载时必须用户点击调用浏览器 `install()`，安装返回 true 后还要重新检测能力。
+v22把旧本地/browser/OpenAI三套面板从 `public/legacy/index.html` 移除，当前工作台只显示一个“百炼语音”入口。页面只加载新 `asr-integration.mjs`，不加载旧 `voice-ui.mjs`、`local-asr-ui.mjs`、`api-voice-ui.mjs`。这些历史文件部分仍在公开源码中，**存在不等于当前运行**，不应据旧文件推导当前UI字段或发送策略。
 
-浏览器安装 promise 没有本项目可用的真正取消接口，关闭面板只是停止等待/忽略后续结果，不能保证浏览器语言包下载停止。开始识别也须真实点击；15秒收不到音频开始事件会 abort，保留错误码；麦克风诊断只打开输入轨道后立即释放，不证明捕捉到声音或中文转写成功。朗读提示只选 `localService===true` 的中文声音，并先停识别，避免提示被当作用户回答。
+`public/asr-integration.mjs` 打开同源iframe覆盖层：`/asr/?embedded=1&destination=task` 或 `destination=memo`。这是语音子页面，不是第二套工作台；原工作台和任务/提醒定时器留在原文档继续运行。iframe明确允许麦克风，但仍须用户操作和浏览器权限，打开面板本身不申请录音或上传。390px布局切换本身仍只修改同一工作台的CSS状态，不产生iframe；不要把两种机制混淆。
 
-`Intake` 逐项补 `bed / name / task / minutes / anchor`，只接最终识别并按 eventId 去重；没有完整中文数词解析、否定/更正意图理解或医学语义能力。分钟要求大于0、不超过10080；起点需明确“从现在”或“从几分钟前”。只有明确“确认创建/确认建立”且字段完整才进入终态，防重复创建。`voice-ui.mjs` 默认把这个确认转成**不计时研究草稿**；额外勾选 `voiceDemoTimer` 后才建非临床测试任务。不要把普通句子里的“确认”宽松当作授权。
-
-### 6.2 独立 Whisper 浏览器 WASM 路线
-
-| 文件 | 作用 |
+| 文件 | 当前职责 |
 | --- | --- |
-| `public/local-asr-ui.mjs` | 加载、停止后识别/快照模式选择、录音状态、最终文本采用、人工核对、去知识或备忘 |
-| `public/local-asr/local-asr.mjs` | `LocalASR` Worker 生命周期、Promise请求、16k重采样、静音/有限数校验、取消代际 |
-| `public/local-asr/asr-worker.mjs` | Transformers.js pipeline；WASM、q8、中文转写、单线程、最多128新token |
-| `public/local-asr/local-capture.mjs` | MediaRecorder录制后由 AudioContext 本机解码，混为单声道 |
-| `public/local-asr/pcm-capture.mjs` | AudioWorklet PCM采集、30秒上限、停止flush、2秒尾段确认超时 |
-| `public/local-asr/pcm-worklet.mjs` | 4096采样缓冲、声道平均、转移PCM buffer，响应flush |
-| `public/local-asr/near-realtime.mjs` | 每约4秒对累计音频做批量快照，最后整段再识别 |
-| `public/local-asr/split-decoder-manifest.mjs` | 固定decoder文件大小和分片/合并SHA-256 |
-| `public/local-asr/split-decoder-cache.mjs` | 同源分片读取、逐片及合并完整性校验、验证缓存、阻止越界路径 |
-| `public/local-asr/vendor/` | 本地 Transformers.js、ONNX Runtime JS/WASM及许可证 |
+| `public/asr/index.html` | 语音、待核对、个人API设置、已核对工作草稿四视图DOM；只提供百炼北京/新加坡选项 |
+| `public/asr/app.js` | 录音/暂停/结束、导入转WAV、本次设置与key、同意、手动发送、核对与草稿回传 |
+| `public/asr/styles.css` | 独立语音页面样式，最大壳宽440px、窄屏/嵌入模式/降低动画支持 |
+| `public/asr-integration.mjs` | 覆盖层、同源message、task/memo目的地、焦点/inert、告警关闭、独立页面草稿接收 |
+| `public/asr-integration.css` | 覆盖层及390px模式布局 |
+| `public/api-recorder.mjs` | AudioWorklet采集、暂停恢复、30秒上限、WAV编码、释放/取消 |
+| `public/speech-endpoint.mjs` | 纯本地能量端点检测，不识词、不联网、不上传 |
+| `public/local-asr/pcm-worklet.mjs` | 当前录音仍复用的PCM采集worklet；不要因“旧本地识别停用”就删除它 |
+| `public/api-models.mjs`、`api-request.mjs` | 官方provider/model约束、session状态、请求和安全错误提示 |
+| `server/provider-transport.mjs` | 百炼JSON/base64上游与历史OpenAI multipart兼容；提取真实返回文本 |
 
-Worker 使用 `env.allowRemoteModels=false`、`allowLocalModels=true`、本目录 `models/` 路径；不会遇到缺权重时转去 Hugging Face 自动取模型。所谓“下载模型”是从部署者放在**本站**的资源路径加载，不是本包自带官方自动下载器。
+### 6.2 本次设置和录音行为
 
-`LocalASR.transcribe()` 接 Float32Array、真实采样率8000–192000Hz、最长30秒，必要时 OfflineAudioContext 转到16000Hz；拒绝非有限采样和 RMS<0.0001的近静音。Worker再要求16k单声道1600–480000采样，即0.1–30秒。这个规则只防某些无效输入，不保证语音内容正确。
+新UI默认设置仅在内存：
 
-“近实时”不是流式模型：每约4秒对累计PCM重跑一次，已有推理没结束就跳过快照，不堆请求；单次慢于6000ms或失败时降为停止后整段识别。暂定结果不存记录；停止时等当前快照结束再做最终整段识别；取消通过代际与终止Worker避免晚到结果覆盖。取消后模型需重新加载，缓存可能复用。WASM内存、加载时间、耗电、长句截断、中文专名/数字/床号准确性均需设备评估。
-
-### 6.3 公开包缺什么
-
-以下目录/文件被有意移除，不应以空文件、随机模型或未经授权的旧包静默补齐：
-
-```text
-public/local-asr/models/whisper-tiny/config.json
-public/local-asr/models/whisper-tiny/generation_config.json
-public/local-asr/models/whisper-tiny/preprocessor_config.json
-public/local-asr/models/whisper-tiny/tokenizer.json
-public/local-asr/models/whisper-tiny/tokenizer_config.json
-public/local-asr/models/whisper-tiny/onnx/encoder_model_quantized.onnx
-public/local-asr/models/whisper-tiny/onnx/decoder_model_merged_quantized.part1.bin
-public/local-asr/models/whisper-tiny/onnx/decoder_model_merged_quantized.part2.bin
-public/local-asr/example/fixture.f32
-public/local-asr/example/provenance.json
+```js
+{ provider: 'bailian-cn', workspace: '', model: 'qwen-audio-3.1-asr-flash' }
 ```
 
-现有加载清单预期的 decoder：
+用户手动填本人的百炼key，选北京/新加坡，必要时填业务空间ID，点击“保存本次设置”。这不是保存到账户或磁盘：没有settings/key的localStorage、服务器secret或共享key读取。表单与已保存设置不一致、key更改后未保存，都不能发送。地域/provider或workspace变更会清key；模型、地域、workspace、key、音频变化均撤销先前发送同意。
 
-| 资源 | 字节 | SHA-256 |
-| --- | ---: | --- |
-| 合并 `decoder_model_merged_quantized.onnx` | 30719241 | `25e807a962b6349356d0ea5d0dfe530b7e5bf0e2a484aeca0359d03143faddd3` |
-| `decoder_model_merged_quantized.part1.bin` | 16777216 | `48573a654213b2dec0acbadcd07f1cb6d66d824b10ff172b8686415e2eed71de` |
-| `decoder_model_merged_quantized.part2.bin` | 13942025 | `238b2c2cb5bff6df5971fa326fd82591d857b139b458b973ebf7c7ac4db8f05b` |
+`createRecorder()`要求安全上下文、AudioContext、AudioWorklet、`getUserMedia`；开始按钮触发后才申请麦克风。录音本机采集，混为单声道，输出16000Hz、PCM16 WAV；暂停使用AudioContext suspend并保留剩余录音时长，恢复继续，停止后释放输入轨道/音频图并等待flush最多300ms。尾段确认失败不会悄悄把部分数据发上游。
 
-这些只是保留的代码元数据，不意味着对应二进制存在。源码许可说明记录来源 [onnx-community/whisper-tiny](https://huggingface.co/onnx-community/whisper-tiny)，revision `ff4177021cc41f7db950912b73ea4fdf7d01d8e7`，上游 [openai/whisper-tiny](https://huggingface.co/openai/whisper-tiny)。独立恢复前须取得授权和转换来源证据、准确模型/分片、每个实际文件的完整性记录。不得把 Transformers.js 的 Apache 许可直接当作所有转换权重都已核实的再分发许可。
+新UI启用纯本地能量检测：默认持续语音判定最低220ms；已检测到语音后约1800ms低能量停顿停止，初始约8000ms未形成语音停止，活动录音总上限30秒。阈值随噪声估计调整，依据PCM块而非准确词句结束；噪声/弱声可能误判，**不是医学级VAD或实时ASR**。暂停段不计入采集音频，30秒是本轮活动录音上限，不应描述为从打开页面起30秒。
 
-示例原来源记录为 [google/fleurs](https://huggingface.co/datasets/google/fleurs)；若恢复，应为实际 `fixture.f32` 留下样本归属、许可、采样率、转换流程及该 Float32 文件自己的哈希，不能拿无关 WAV 哈希顶替。此处仅转述包内来源记录，不声称本次完成模型或数据集法律审计。
+**手动停止、静音停止、达到时长上限都只产生本机预览，不上传。** 未检测到明显语音会提示但仍可试听，不能保证自动检测排除所有无语音。页面波形使用预设条形与动画，不是实际音量计，也不能作为麦克风检测成功的证据。
 
-原HTML还保留历史FLEURS示例约10.38秒和“篇章”曾识别为“偏长”的记录；这是既有单样本错误说明，不是本次可复现测试、整体准确率或医学验证。界面会显示单次elapsedMs，不提供跨设备性能保证。
+### 6.3 文件导入与发送门槛
 
-当前 UI 仍有首次约65/66MB加载和公开示例按钮文案，按本公开包点击会因资源缺失失败；这是要修的可用性提示，不是“模型已下载”。**没有训练脚本、训练数据交付、训练日志、微调权重、医学WER/CER基准或临床准确率证明**。可明确说“保留通用模型的浏览器推理接入代码”，不能说“本应用训练成功”“护理专用模型”或“已经离线可用”。
+文件选择先在本机处理：输入最多10MiB；浏览器 `decodeAudioData` 必须支持它、解码时长>0且≤30秒；混为单声道再用 `encodeWAV` 转成16k PCM16，作为本轮预览。支持哪些压缩格式取决于浏览器，不能承诺所有MP3/WebM均可；服务器依然只接受经过校验的PCM16 WAV，不直接接收任意原始文件或外部音频URL。
 
-### 6.4 本地结果进入业务的门槛
+试听后，用户须勾选**本轮音频与key发到所显示的具体地域/模型/endpoint并承担个人费用**，再点“手动发送这段音频”。后台状态、未连接会话、无文件、未勾同意、不匹配设置均不能发送。保存设置、导入、停顿、预览、切页都不是上传授权。
 
-独立本地识别先放 `pendingFinal` 与预览区域。点击“采用”才进入可编辑转写框并清除核对勾选；修改文本再次清除核对。选择知识目的地时，人工核对后才按名称/别名子串匹配候选，用户再点击候选生成不计时草稿；不会推断患者、起算事件或提醒间隔。选择备忘目的地只放入编辑框，未保存。
+发送前清掉旧结果/核对状态；启动请求后清key输入与已保存key绑定，finally撤销发送同意。没有自动重试或地域fallback。下一次发送需要重新提供/保存本人key并重新同意。取消已经到达上游的请求不能保证未计费。
 
-本地与 API 的采集是不同类：本地 PCM停止尾段等待2秒，API录音等待300ms；不要把一条路线的测试结论套到另一条。安全上下文、HTTPS/localhost权限、AudioWorklet支持、浏览器本地语言包与 WASM 模型资源也是不同前置条件，诊断时逐一分层。
+### 6.4 核对后只回传草稿
 
-## 7 OpenAI BYOK 接口和安全边界
+上游成功文本进入“待核对”视图，可以回听本轮音频；编辑会撤销核对。勾“我已核对转写内容”后采用到可编辑的工作草稿，再由用户点回工作台：
 
-### 7.1 谁接收数据和承担费用
+- `destination=task`：追加到 `#input`，不调用 `parseInput()`，不建卡、不修改deadline、不标完成；后续仍走主工作台人工核对。
+- `destination=memo`：追加到 `#memoText`，不自动保存、不新建提醒、不计完成数量；原有编辑内容保留，中间加换行。
+- iframe回传只接受 `e.origin===location.origin` 且 `e.source===当前frame.contentWindow`，文本字符串≤12000字符。
+- 独立 `/asr/` 页面返回工作台时，暂存 `sessionStorage['tuotuo-asr-handoff']={text,destination,createdAt}`；主页面读取即删除，接受年龄0≤age<300000ms和≤12000字符的草稿，只使用一次。**所以不能说“任何转写文本从不进入浏览器存储”**；key/音频不持久化，但已人工采用草稿有这一短时传递例外。
 
-发送路径为浏览器 → **本站后端** → `https://api.openai.com/v1/audio/transcriptions`，不是浏览器直接绕过本站。key 与音频在本站请求内存中处理，只有这次用户自带 key 被用于上游 Bearer。没有服务器共享 key、拥有者兜底或任意 URL；`OPENAI_API_KEY` 不是本实现所需配置。
+草稿可复制到剪贴板；这是用户主动动作，不是自动保存或云同步。sessionStorage未加密，5分钟是应用接收有效期，不是浏览器自动定时擦除承诺；如果未返回工作台，数据可能留到会话结束。共享设备仍只应使用虚构资料。
 
-`public/api-models.mjs` 是前后端共同的唯一白名单：
+### 6.5 关闭、后台和提醒抢占
 
-```text
-gpt-transcribe                         默认
-gpt-4o-transcribe
-gpt-4o-mini-transcribe
-gpt-4o-mini-transcribe-2025-12-15
-whisper-1
-```
+v22已修复旧告警事件缺线：`enqueueAlarm()`现在真实派发 `care-alarm-start`，新整合层监听后向frame发送同源 `tuotuo-asr-interrupt`，移除overlay并恢复工作台；另有屏保hidden变化的MutationObserver兜底。因此旧手册“监听但不派发”的缺陷不再适用于v22。
 
-这是**代码允许列表**，不是每个账户的可调用保证；聊天模型、Realtime、说话人分离、第三方兼容代理都不在范围。接手时若要改模型，须一起复核 API契约、账户权限、成本预留和测试，不能仅改界面候选列表。
+关闭/返回、Escape、pagehide、页面后台会停止录音或取消请求、清key、撤销同意，代际标记忽略晚到结果；pagehide清音频/结果，overlay移除使子页面卸载。返回工作台派发 `tuotuo-asr-return` 更新空闲时钟，避免刚回来马上误入屏保。告警抢占不知悉、不完成任何任务，不应解除正在显示的屏保对背景的inert。
 
-已查阅的官方入口为 [音频文件转写指南](https://developers.openai.com/api/docs/guides/speech-to-text) 与 [创建转写接口](https://developers.openai.com/api/reference/resources/audio/subresources/transcriptions/methods/create)。模型可用性、计费、上游数据处理政策会变化，应在经授权真实测试前复核官方说明；不要从本站 `connected` 或静态白名单推导已验证余额/价格。
+后台 `suspend()` 并不无条件抹掉所有已有音频/核对草稿，主要清key/取消活动处理与暂停播放；这是当前行为，不能夸大成安全内存擦除。JS字符串、网络层与浏览器扩展行为仍不在密码学擦除保证内。实际手机来电/权限弹窗/音频设备切换与后台行为未做真机验证。
 
-### 7.2 前端录音和同意生命周期
+### 6.6 保留但不启用的旧本地识别代码
 
-`api-recorder.mjs` 要求安全上下文、`getUserMedia`、AudioContext、AudioWorklet，用户真实点击才申请麦克风；最长30秒，停止后本机编码16kHz、单声道PCM16 WAV，并释放轨道/音频图。停止录音只形成可试听的本机文件，不上传。
+历史 `voice-intake.mjs / voice-ui.mjs` 是浏览器SpeechRecognition本地语言包方案；历史 `local-asr-ui.mjs / local-asr/*.mjs` 是Transformers.js+Whisper WASM方案；历史 `api-voice-ui.mjs` 是旧API面板绑定。**当前工作台不加载这些UI，也不提供旧本地识别入口。** 其中函数/旧提示仍可能提“本地识别”或“本机已配置key”，不应误当已实现新功能；新活跃发送没有本机/服务端key resolver。
 
-`api-voice-ui.mjs` 管理模型、选文件或录音、个人 key、发送同意。变更音频、模型、key会撤销原同意；点击发送后清空可见 key，成功/失败 finally 从 FormData删除 key。关闭面板、切到别的导航、取消、页面后台、pagehide等会取消录音/请求并清理 key/音频；恢复BFCache时取消并重查会话。代码也监听 `care-alarm-start`，但当前告警未派发此事件，不能承诺这一触发链有效。
+公开版仍排除 `public/local-asr/models/whisper-tiny/` 的配置、词表、encoder与decoder二进制，以及 `public/local-asr/example/fixture.f32` 和 `provenance.json`。保留加载器和运行库仅供历史参考；没有训练脚本、训练数据交付、微调成果或医学准确率证明，不是可用离线语音包，不是为本项目训练的模型。若恢复旧路线，须重新审许可、来源、文件完整性、UI接线、取消生命周期和整个新provider契约，不能把旧脚本直接挂回页面。
 
-结果进入 `#apiTranscript`，需要人工核对后才采用到普通输入框；不会自动解析建卡、自动完成任务。**关闭/取消尚未清空当前 DOM 内的转写文本与人工核对状态**，虽然不持久化，仍是共享设备上的待修隐私体验。
+历史decoder元数据仍在 `split-decoder-manifest.mjs`：合并30719241字节、SHA-256 `25e807a962b6349356d0ea5d0dfe530b7e5bf0e2a484aeca0359d03143faddd3`；part1为16777216字节、`48573a654213b2dec0acbadcd07f1cb6d66d824b10ff172b8686415e2eed71de`，part2为13942025字节、`238b2c2cb5bff6df5971fa326fd82591d857b139b458b973ebf7c7ac4db8f05b`。这些数值不代表资源在当前包内。历史来源与权利限制看 `public/local-asr/LICENSES.txt` 和根notices；不得从未审原包补回。
 
-清理不等于密码学擦除 JavaScript字符串或浏览器底层内存，不能约束扩展和密码管理器。取消只发 abort、释放本地资源并忽略晚到结果，**已到上游的请求仍可能收费**；没有自动重试。失败后再手动提交是另一可能计费请求，不能无提示重试来“修复”。
+## 7 v22 转写接口与独立部署契约
+
+### 7.1 当前UI与服务端兼容范围
+
+当前公开UI**只提供百炼北京和新加坡、一个模型 `qwen-audio-3.1-asr-flash`**。`public/api-models.mjs` 还保留OpenAI服务端兼容，因此不能写成“整个后端只接受百炼”。准确映射：
+
+| `provider` | 允许模型 | 无workspace时基础域名 | 当前UI |
+| --- | --- | --- | --- |
+| `bailian-cn` | `qwen-audio-3.1-asr-flash` | `https://dashscope.aliyuncs.com` | 北京，默认 |
+| `bailian-intl` | `qwen-audio-3.1-asr-flash` | `https://dashscope-intl.aliyuncs.com` | 新加坡 |
+| `openai` | `gpt-transcribe`、`gpt-4o-transcribe`、`gpt-4o-mini-transcribe`、`gpt-4o-mini-transcribe-2025-12-15`、`whisper-1` | `https://api.openai.com` | 不展示，历史协议兼容 |
+
+`DEFAULT_ASR_MODEL` 已变为Qwen；`defaultProvider(model)`对Qwen返回`bailian-cn`，其他允许模型返回`openai`。Qwen不能搭OpenAI、OpenAI模型不能搭百炼；拒绝不在精确名单的provider/model，不尝试其他地域或模型。
+
+百炼路径固定 `/api/v1/services/aigc/multimodal-generation/generation`。workspace可选，若有，须为1–63字符ASCII DNS label：首尾字母或数字，中间可含连字符；拒绝点、斜杠、协议、账号、换行、中文和首尾连字符。北京域名固定组合为 `https://<workspace>.cn-beijing.maas.aliyuncs.com`，新加坡为 `https://<workspace>.ap-southeast-1.maas.aliyuncs.com`；**不是让用户填任意URL**。OpenAI不允许workspace，固定路径 `/v1/audio/transcriptions`。
+
+上游契约依据为 [阿里云百炼非实时ASR HTTP文档](https://help.aliyun.com/zh/model-studio/qwen-audio-asr-http-api)。官方提供两地域专属workspace域名；本站同时保留上述基础域名。key必须与用户账户、地域、业务空间、模型权限相符；本次未用真实key证明可调用。不要把HTTP规范查阅等同于真实账户验收。
+
+### 7.2 数据和费用边界
+
+浏览器把音频+本人当次key发到**同源本站认证后端**，后端再去所选官方provider；不是浏览器直连，不是拥有者付费代理。key仅在页面/请求内存短暂使用，不写localStorage/sessionStorage/D1、不读取上传包 `.env.local`、没有server-key resolver或共享兜底。原上传包里的本地服务器、环境文件和安装器没有作为隐式key来源搬进这套安全部署。
+
+录音、本机静音端点检测、设置保存不收费；明确手动发送后可能产生**用户本人百炼账户费用**。站内D1预留只限制获准请求次数/保守单位，不查询余额、不保证provider账单硬上限。取消、超时或失败可能已收费且不自动重试。
 
 ### 7.3 GET 会话检查
 
@@ -527,133 +525,143 @@ whisper-1
 GET /api/session
 ```
 
-正常 JSON 形状如下，三个字段均为布尔：
+返回四个布尔：
 
 ```json
-{"authenticated":false,"connected":false,"owner":false}
+{"authenticated":false,"backendReady":true,"connected":false,"owner":false}
 ```
 
-- `authenticated`：认证 helper 获得稳定 userId 与 email。
-- `connected`：有认证、运行配置启用、DB存在、两张额度表各一次 `SELECT site_id ... LIMIT 1` 成功。
-- `owner`：userId等于可选 `SITE_OWNER_USER_ID`；不决定是否允许普通登录用户转写。浏览器 `readAPIStatus()` 不使用 owner。
+这是形状示例，不是固定生产响应。`backendReady`独立于登录：运行配置enabled且DB两表 `SELECT site_id ... LIMIT 1`可读就为true；`authenticated`由可信身份helper决定；`connected=authenticated && backendReady`；`owner`为可选拥有者ID比较，仅展示用途。
 
-响应 `Cache-Control:no-store`。`connected=true` **不检查表可写、唯一约束、预算余额、OpenAI网络、账户模型权限或真实结果**；它是弱健康检查，不是服务验收。该GET本身不调用OpenAI。
+因此匿名用户可以看到“后端已就绪、请先登录”，而不是错误认为后端坏了。GET无上游调用；表可读仍不证明可写/索引约束/余额/模型权限/真实网络。响应 `Cache-Control:no-store`。`readAPIStatus()`保留backendReady并严格归一化authenticated/connected，不把ready当授权。
 
-### 7.4 POST 请求契约
+### 7.4 POST 请求字段
 
 ```http
 POST /api/transcriptions
-Origin: <与运行配置完全一致的 HTTPS origin>
+Origin: <精确配置的 HTTPS origin>
 Idempotency-Key: <16至80位 A-Z a-z 0-9 _ ->
-Content-Type: multipart/form-data; boundary=<浏览器自动生成>
+Content-Type: multipart/form-data; boundary=<FormData自动生成>
 ```
 
-浏览器使用 `credentials:'same-origin'`、`cache:'no-store'`、`redirect:'error'`。不要手工覆盖 FormData 的 Content-Type而丢失boundary。请求体**只能**有以下四项，每项恰好一次：
+浏览器同源credentials、no-store、redirect:error。服务端检查Origin头和请求URL的origin都精确等于配置值。有界读取整个multipart最多2097152字节。
 
-| 字段 | 类型和约束 |
+| 字段 | v22要求 |
 | --- | --- |
-| `file` | 非空 Blob，最多 `1900*1024` 即1945600字节；真实结构须通过PCM16 WAV校验 |
-| `api_key` | 字符串，8–256字符，不含任何空白；不是有效key证明 |
-| `model` | 精确匹配上述五模型白名单 |
-| `consent` | 精确字符串 `send-to-openai-paid` |
+| `file` | 必须一次，非空Blob≤1945600字节，真实PCM16 WAV格式/时长检查 |
+| `api_key` | 必须一次，字符串8–256字符，不含空白；只是格式检查 |
+| `model` | 必须一次，严格模型/provider匹配 |
+| `consent` | 必须一次，新客户端精确发送 `send-to-provider-paid` |
+| `provider` | 新客户端总发送一次；服务端兼容省略或空值时按model推导；重复拒绝 |
+| `workspace` | 新客户端总发送一次，可空；服务端可省略，重复拒绝，非空须DNS label验证 |
 
-整份 multipart流最多2097152字节；服务端有界读取而非只信 Content-Length。Origin请求头与实际请求URL的origin都必须等于配置的HTTPS origin。禁止额外 `userId`、`base_url`、`language` 或任意其他字段；也不能重复字段欺骗解析。
+只允许这些六种字段。前四项各恰好一次；后两项至多一次。不要将旧v20“四字段契约”当作当前全契约。为了旧OpenAI客户端，只有provider为openai时才兼容旧consent `send-to-openai-paid`；百炼绝不接受这个旧同意值。workspace格式错误当前映射400 `ASR_MODEL_NOT_SUPPORTED`，不是单独WORKSPACE_INVALID HTTP响应。
 
-上游固定发送 `file`（名 `voice.wav`）、`model`、`response_format=json`，不传自定义provider、重定向、共享凭据、`prompt` 或其他转写参数。成功返回：
+身份来自可信入口，不允许body `userId`；也不接受 `base_url`、外部音频URL、language、热词、说话人分离等额外参数。两地域选择不是任意代理配置。
+
+### 7.5 实际上游请求和响应提取
+
+百炼请求由 `server/provider-transport.mjs` 组装，header为本人Bearer key、`Content-Type:application/json`、`X-DashScope-SSE:disable`，`redirect:error`，不启用streaming：
 
 ```json
-{"code":"TRANSCRIBED_REVIEW_REQUIRED","text":"这里是需要人工核对的转写"}
+{
+  "model": "qwen-audio-3.1-asr-flash",
+  "input": {"messages": [{"role": "user", "content": [
+    {"type": "input_audio", "input_audio": {"data": "data:audio/wav;base64,<本次已校验WAV>"}}
+  ]}]},
+  "parameters": {"format": "wav", "sample_rate": "16000"}
+}
 ```
 
-上游响应体最多65536字节，`text` 必须字符串且最多12000字符；底层接受空字符串，但UI不能采用空文本。不存在置信度、时间戳、说话人、自动医学纠错、收费明细或任务对象返回。
+`sample_rate`取服务端WAV校验得到的实际采样率并转字符串；UI通常输出16000，但服务端允许8–48k范围，不能写死所有请求都16000。编码字节缓冲finally清零，key变量清空；JSON字符串和网络栈仍不保证物理擦除。后端从返回依次尝试 `output.text`、`output.output.sentence.text`、`output.sentence.text`、`output.sentences[].text`拼接；这不表示本UI支持说话人分离配置。
 
-### 7.5 实际拒绝规则和错误码
+历史OpenAI兼容发送multipart `file,model,response_format=json`，提取顶层text。所有provider均只调用一次，不重定向、不自动重试。
 
-验证顺序：可用配置 → 方法 → origin → 启动5秒准备超时 → 可信认证 → 尝试次数 → 幂等key → multipart → 有界读体 → 字段唯一性 → 模型 → 同意 → key → 文件 → WAV → 原子额度预留 → 切20秒上游超时 → 单次上游 → 有界结果检查。
+成功返回：
 
-| HTTP | `code` | 含义 |
+```json
+{"code":"TRANSCRIBED_REVIEW_REQUIRED","text":"待人工核对的真实转写","requestId":"可选服务商请求标识"}
+```
+
+`requestId`仅当上游 `request_id` 为1–100位字母数字下划线连字符时返回；没有时省略，**不是客户端Idempotency-Key的回显**。上游body限制262144字节；text须字符串≤12000字符，空白text返回422 `NO_SPEECH`。顶层data.code为真值则视为provider失败。客户端当前`submitAPIFile`成功只返回text，错误可带providerStatus/requestId供上层使用；不显示或透传原始provider错误body。
+
+### 7.6 校验顺序、超时和错误码
+
+顺序：必要配置 → POST → origin →5秒准备deadline →可信身份 →尝试计数 →幂等key →multipart/有界读取 →字段集合与前四项唯一性 →model/provider/workspace →provider/workspace重复检查 →consent →本人key →file/WAV →原子预留 →**60秒**provider deadline →一次调用 →最多256KiB结果解析。
+
+| HTTP | code | 条件 |
 | ---: | --- | --- |
-| 503 | `BACKEND_NOT_CONNECTED` | 关闭或缺必要配置/依赖 |
-| 405 | `POST_REQUIRED` | 底层handler非POST；框架只导出POST，其他方法可先由框架处理 |
-| 403 | `ORIGIN_REQUIRED` | Origin或请求URL origin不符 |
-| 401 | `AUTH_REQUIRED` | 缺可信用户 |
-| 429 | `USER_LIMIT_OR_DUPLICATE` | 尝试超限、预算不足、重复幂等key统一错误 |
-| 400 | `REQUEST_ID_REQUIRED` | 幂等key格式错误 |
-| 415 | `MULTIPART_REQUIRED` | 不是合法入口要求的multipart类型 |
-| 400 | `INVALID_FIELDS` | 多余/缺失/重复字段 |
-| 400 | `ASR_MODEL_NOT_SUPPORTED` | 不在白名单 |
-| 400 | `CONSENT_REQUIRED` | 同意标记不符 |
-| 400 | `OWN_KEY_REQUIRED` | key类型、长度或空白检查失败 |
-| 415 | `WAV_REQUIRED` | 非Blob、空文件或超过单文件限制 |
-| 415 | `AUDIO_INVALID` | WAV内容结构不符合 |
-| 408 | `REQUEST_TIMEOUT` | 显式取消/超时检查分支 |
-| 502 | `PROVIDER_FAILED_NO_RETRY` | 上游非成功状态 |
-| 502 | `INVALID_TRANSCRIPT` | text类型或长度不符 |
-| 408或502 | `FAILED_NO_RETRY` | 其他异常；abort后408，其余502 |
+| 503 | `BACKEND_NOT_CONNECTED` | 关闭或缺配置/依赖 |
+| 405 | `POST_REQUIRED` | 底层handler非POST；route仅导出POST，框架可先处理其他方法 |
+| 403 | `ORIGIN_REQUIRED` | 来源不符 |
+| 401 | `AUTH_REQUIRED` | 没有可信身份；这是本地handler测试结论，非本次直接测得生产401 |
+| 429 | `USER_LIMIT_OR_DUPLICATE` | 尝试超限、预算不足或重复幂等key |
+| 400 | `REQUEST_ID_REQUIRED` | 幂等key不符 |
+| 415 | `MULTIPART_REQUIRED` | multipart类型不符 |
+| 400 | `INVALID_FIELDS` | 额外字段/前四缺失或重复/后两重复 |
+| 400 | `ASR_MODEL_NOT_SUPPORTED` | 模型/provider不匹配或workspace/endpoint约束失败 |
+| 400 | `CONSENT_REQUIRED` | 新同意值错误，或百炼用了旧OpenAI同意值 |
+| 400 | `OWN_KEY_REQUIRED` | key格式不符 |
+| 415 | `WAV_REQUIRED` / `AUDIO_INVALID` | 文件对象/大小或真实格式不符 |
+| 408 | `REQUEST_TIMEOUT` | 显式超时/取消检查分支 |
+| 502 | `PROVIDER_UNAUTHORIZED` | provider HTTP401/403，附`providerStatus` |
+| 502 | `PROVIDER_RATE_LIMITED` | provider HTTP402/429，附`providerStatus` |
+| 502 | `PROVIDER_BAD_REQUEST` | provider HTTP400/404/422，附`providerStatus` |
+| 502 | `PROVIDER_FAILED_NO_RETRY` | 其他上游非2xx或返回业务error code |
+| 502 | `INVALID_TRANSCRIPT` | 提取不到字符串或超过12000字符 |
+| 422 | `NO_SPEECH` | 字符串为空/全空白 |
+| 408或502 | `FAILED_NO_RETRY` | 其余异常；abort为408，否则502 |
 
-不是所有超大请求都返回413：multipart总流超限等异常当前进入502 `FAILED_NO_RETRY`。取消/超时也不总是 `REQUEST_TIMEOUT`，catch可为408 `FAILED_NO_RETRY`。handler通常加 `Cache-Control:no-store` 与 `X-Content-Type-Options:nosniff`；route提前关闭分支只明确加no-store。前端把所有非2xx统一为 `TRANSCRIPTION_FAILED_NO_RETRY`，不会透传上游详细错误/密钥。诊断不能要求用户把key或完整敏感网络记录发到公共issue。
+multipart总流过大并非保证返回413，仍可能进入502 FAILED_NO_RETRY。异常处理不退额度、不自动重试。响应通常no-store/nosniff，route早期关闭分支仅明确no-store。客户端新版会解析错误JSON并由 `API_ERRORS`给出安全提示；不再像v20把所有非2xx一概改成TRANSCRIPTION_FAILED_NO_RETRY。`API_ERRORS`残留“本机已配置key”文案不是可用功能，当前根本没有此resolver。
 
-### 7.6 音频校验细则
+### 7.7 音频校验和D1结构
 
-`server/audio-validator.mjs` 校验 RIFF/WAVE实际二进制，不信扩展名或MIME：PCM tag 1、16-bit little endian、1或2声道、8000–48000Hz、真实时长大于0且≤30秒；RIFF总长、chunk边界、奇数padding、byteRate、blockAlign、PCM整帧均须一致。只接受一个fmt和一个非空data，fmt大小16或18且18时扩展长度为0，最多1024 chunks；其他结构有效的非fmt/data chunks可存在。拒绝MP3、WebM、float WAV、RF64及改名伪装。
+WAV校验仍在 `server/audio-validator.mjs`：RIFF/WAVE、声明长度一致、PCM tag1、16bit little endian、1或2声道、8000–48000Hz、>0且≤30秒、单文件≤1945600字节；一个fmt一个非空data，fmt16或18字节且扩展长度为0；校验chunk边界/padding/byteRate/blockAlign/整帧，最多1024chunks，可含结构合法其他chunk。拒绝float、RF64、压缩音频伪装，格式通过不代表可懂语音或医疗正确。
 
-它不证明音频有可懂语音、符合患者授权或能得到正确临床转写。浏览器录音输出16k单声道只是本应用输出选择，服务端合法输入范围略宽。
+实际SQL `drizzle/0000_robust_richard_fisk.sql`：
 
-### 7.7 D1 表和额度语义
-
-```sql
--- 概念结构；真正执行文件见 drizzle/0000_robust_richard_fisk.sql
-api_attempt_windows(
-  site_id TEXT NOT NULL,
-  user_id TEXT NOT NULL,
-  window_start_ms INTEGER NOT NULL,
-  attempts INTEGER NOT NULL,
+```text
+api_attempt_windows:
+  site_id TEXT, user_id TEXT, window_start_ms INTEGER, attempts INTEGER
   PRIMARY KEY(site_id,user_id,window_start_ms)
-)
-api_cost_reservations(
-  site_id TEXT NOT NULL,
-  user_id TEXT NOT NULL,
-  request_id TEXT NOT NULL,
-  budget_period_start_ms INTEGER NOT NULL,
-  max_cost_micros INTEGER NOT NULL,
-  created_at_ms INTEGER NOT NULL,
+  全部NOT NULL；attempts>0；window_start_ms>=0
+api_cost_reservations:
+  site_id TEXT, user_id TEXT, request_id TEXT,
+  budget_period_start_ms INTEGER, max_cost_micros INTEGER, created_at_ms INTEGER
   PRIMARY KEY(site_id,user_id,request_id)
-)
--- 索引 api_cost_reservations_period(site_id,user_id,budget_period_start_ms)
--- attempts/cost须正，窗口/预算期/创建时间须非负，详见SQL CHECK
+  全部NOT NULL；max_cost_micros>0；两个时间列>=0
+INDEX api_cost_reservations_period(site_id,user_id,budget_period_start_ms)
 ```
 
-`db/schema.ts` 导出 `attempts` 的TypeScript键 `siteId,userId,window,attempts`，`reservations` 的键 `siteId,userId,requestId,period,cost,created`。SQL列名与TS属性名不同，写查询或迁移时不要混用。
+Drizzle TS键：attempts的 `siteId,userId,window,attempts`；reservations的 `siteId,userId,requestId,period,cost,created`。D1不存音频/key/转写/临床任务，任务和备忘仍在localStorage。
 
-`createD1Quota()` 默认每固定60000ms窗口最多3次，预算期86400000ms，按 Unix epoch对齐；不是滚动窗口，不是用户本地午夜。每个 `(site_id,user_id)` 独立，换模型仍共用该用户预算。无效body也可能已消耗一次尝试，只有WAV验过后才预留预算。
+默认固定分钟窗60000ms最多3次，固定日窗86400000ms，按Unix epoch对齐，不是滚动窗口或本机日期。尝试检查早于body验证，非法body也可能耗一次尝试；音频通过后才做原子预算预留。单条upsert/INSERT SELECT保护并发和唯一性；幂等主键跨天保留，重复返回429而非重放第一次text。失败/取消/超时不退预留。
 
-尝试用单条upsert原子增加；预留用单条INSERT SELECT同时检查预算和唯一key，避免竞争超支。幂等主键跨所有日期，重复请求返回429，**不缓存重放首次结果**。一次成功预留只允许一次上游尝试；失败、超时和取消均不退预留。测试用12连接SQLite模拟并发，不是云端D1实测。
+### 7.8 当前生产启用值与公开包默认值
 
-`max_cost_micros` 是部署者配置的保守计量单位，不是API实测账单，也不查询余额；单次配置必须足够覆盖全部允许模型与最长音频的最坏成本。不能宣传真实OpenAI账户绝不超支。现无退款、账单查询、请求查询或安全ledger归档/删除接口；直接删历史预留会破坏跨日幂等，不可随便加定时清表。
+**两个环境不能混写：**生产v22已在明确授权下配置并启用；新公开源码为了独立部署安全仍保持关闭样例和独立占位，不携带生产账户/数据库/站点私有ID。
 
-### 7.8 配置和必须替换的占位
+| 配置 | 当前生产已设的非秘密值 | 独立公开包起点 |
+| --- | --- | --- |
+| `API_TRANSCRIPTION_ENABLED` | 精确字符串`true` | `.env.example`为`false` |
+| `API_EXPECTED_ORIGIN` | `https://nurse-notes-demo.wiggly-char-1989.chatgpt.site` | 空；需替换为自己的精确HTTPS origin，无尾斜杠/路径/账号密码 |
+| `API_MAX_COST_MICROS_PER_REQUEST` | `100000` | 空；部署者批准的正safe integer |
+| `API_USER_DAILY_BUDGET_MICROS` | `1000000` | 空；正safe integer且≥单次值 |
+| `SITE_OWNER_USER_ID` | 不需要用于启用转写 | 可选，仅owner展示，不当授权 |
+| `SITE_ID` | 生产使用自己的稳定站点ID，不公开其值 | `server/runtime-config.mjs`公开占位；必须主动替换，不是现有env变量 |
+| D1 `DB` | 两张配额表存在 | 自己的真实绑定+迁移；本地模拟不是生产数据库 |
 
-| 位置/键 | 当前要求 |
-| --- | --- |
-| `API_TRANSCRIPTION_ENABLED` | `.env.example` 为 `false`；只有精确字符串 `true` 才尝试启用 |
-| `API_EXPECTED_ORIGIN` | 纯HTTPS origin，不能带路径、尾斜杠、账号密码；不能用HTTP localhost冒充已验生产 |
-| `API_USER_DAILY_BUDGET_MICROS` | 十进制正安全整数，部署者经成本审查后设置 |
-| `API_MAX_COST_MICROS_PER_REQUEST` | 十进制正安全整数且≤日预算，不是客户端可指定 |
-| `SITE_OWNER_USER_ID` | 可选，只影响owner展示，不是转写准入限制 |
-| `server/runtime-config.mjs` 的 `SITE_ID` | 当前硬编码 `configure-unique-site-id-before-api-use`，**不是现有env变量**；启用前须改成独立部署的稳定唯一ID |
-| `.openai/hosting.json` | `project_id:null`、`d1:"DB"`、`r2:null`，不要补回原私有ID |
-| `vite.config.ts` D1占位 | 本地模拟数据库配置，不是真实生产数据库 |
+当前生产每成功预留一次消耗100000单位，日预算1000000，因此**每个真实登录身份每固定日最多10次获准预留**，每分钟尝试最多3次。失败也占已预留的一次；并不是十次都能成功转写，更不是个人百炼真实账单最多某个金额。不要把单位名micros直接换算成经核实的provider计费保证。
 
-`runtimeConfig` 还要求 `env.DB.prepare` 为函数。**SITE_ID占位本身非空，所以现代码不会因它仍是占位而自动阻止启用**；必须把这项列为部署闸门。没有满足全部条件则关闭；配置存在也不证明数据库schema、可信登录或服务商有效。
+公开 `SITE_ID`非空占位仍会通过现有非空检查，不能当自动安全闸门；启用前必须检查替换、可信认证、D1正确约束、精确origin和预算。不要设共享OpenAI/DashScope key，用户key必须每次手动提供。生产已启用不授权复制其身份、改公开包默认开关或自动发付费请求。
 
-### 7.9 认证和独立部署底线
+### 7.9 认证与生产检查边界
 
-`app/chatgpt-auth.ts` 读取可信平台注入的 `oai-authenticated-user-id` 和 `oai-authenticated-user-email`，二者须同时存在；可选姓名按指定UTF-8百分号编码解码。D1身份使用userId，不用email作永久主键。
+根页面公开直达 `/legacy/index.html`；API仍从可信托管入口取得 `oai-authenticated-user-id` 与 `oai-authenticated-user-email`，二者都需要，D1按稳定userId隔离。应用自身不验签身份头，独立部署必须剥离外来伪造头并由可信认证层注入；**不能把测试手构头用于生产登录**。登录不等于医院/组织成员授权，仍需另外访问策略。
 
-应用自己不验签这两个头。正式入口必须剥离外部伪造头、完成可信认证、再注入身份；直接把裸Worker暴露公网并相信客户端头会破坏隔离。**不要把测试里构造的认证头抄到生产请求里绕过认证。** 登录身份也不证明医院/组织成员资格；如需限制成员，必须另外实现托管访问策略或服务器端会员白名单。
+`/signin-with-chatgpt`、`/signout-with-chatgpt`、`/callback`由托管层负责。v22已用支持的云浏览器打开正式登录链接，到达OpenAI欢迎登录页，**未输入账号、未完成用户登录**；不能据此声称真实会话与付费识别验收完毕。
 
-`/signin-with-chatgpt`、`/signout-with-chatgpt`、`/callback` 属于托管入口保留路径；不要随意在app路由覆盖。portable dev可用loopback mock，它不是真实OAuth，不能带到生产；`npm start`也不模拟登录。GET session、建表和build通过不能替代真实认证链验证。
-
+普通Python HTTP请求遇到边缘403/1010而被阻止，没有绕过；因此没有直接实测生产匿名转写401。本地handler认证拒绝测试通过，只说明该代码条件，不替代生产链路证据。生产 `backendReady`、管理面配置和表存在也不证明真实提供商接受key/音频或计费成功。
 ## 8 知识库和所有保留素材
 
 ### 8.1 知识库的实际覆盖和 schema
@@ -709,7 +717,7 @@ api_cost_reservations(
 | `public/assets/paper.svg`、`botanical-note.svg` | 原型装饰SVG素材 |
 | `public/favicon.svg` | 网站图标 |
 | `public/local-asr/vendor/transformers.min.js` | Transformers.js 3.8.1浏览器bundle；不是模型权重 |
-| `public/local-asr/vendor/ort-wasm-simd-threaded.jsep.mjs`、`.wasm` | ONNX Runtime Web运行库；当前worker显式单线程 |
+| `public/local-asr/vendor/ort-wasm-simd-threaded.jsep.mjs`、`.wasm` | ONNX Runtime Web运行库；历史本地worker显式单线程，当前百炼UI不加载该推理库 |
 | `vendor/shadcn-tailwind-4.13.0.css` | starter vendored样式，不等于工作台由全部shadcn组件构建 |
 
 ### 8.3 许可和 notices
@@ -726,197 +734,188 @@ api_cost_reservations(
 
 npm依赖由 `package-lock.json` 锁定，未把整个node_modules打包；各自许可仍适用。现有notices不是完整法律审计。转换权重、词表、示例音频已排除，图片、音效和知识的可再授权范围仍不能由接手模型擅自扩大。
 
-## 9 验证证据和不能冒称通过的范围
+## 9 验证证据和未验范围
 
-### 9.1 当前公开候选
+### 9.1 v22代码及公开候选
 
-编写本文时在未改源码的公开候选上再次执行 `node --test tests/*.test.mjs`：**86 tests，86 pass，0 fail，0 skip**；Node `v24.22.1`。同时复算194个manifest文件SHA-256全部匹配。原公开候选准备阶段还已执行TypeScript `--noEmit` 和 `npm run build`通过；那两项不是本次写文档时新重跑，不应伪造同一轮记录。
+功能源HEAD已核实为 `7acc3f2e5535647e61864bf29514d72570274225`。本手册更新时对该源代码实际重跑 `node --test tests/*.test.mjs`：**99/99通过**。公开脱敏候选另外已完成99/99、TypeScript `--noEmit`、`npm run build`，后两项是本次打包验证记录，不是假称本手册编辑过程又执行了一遍。
 
-此前构建复用已装的锁定依赖，**没有做干净联网安装验收**。ZIP不含node_modules、dist、运行cookie或数据库状态。没有本项目 `npm test` 脚本，正式命令见第3节。
+候选复用已安装锁定依赖，未做从零联网安装。测试音频是合成PCM、上游是mock，无真实key、真实患者音频或费用。公开candidate将preservation的内部认证模板绝对路径改成固定公开哈希，并按明确排除模型更新资源检查；原角色两张PNG和六段MP3未改。
 
-| 测试文件 | 数量 | 真正覆盖 |
+| 测试文件 | 数量 | 范围 |
 | --- | ---: | --- |
-| `tests/api-request.test.mjs` | 4 | 前端请求字段、本人key、白名单、拒绝无同意/未连接、finally清理、不重试 |
-| `tests/audio-validator.test.mjs` | 11 | WAV结构、声道采样率、边界/截断/填充、30秒/大小、中断 |
-| `tests/handler.test.mjs` | 18 | 同源/身份/配置、请求契约、固定上游、预算集成、异常清理、超时、无重试 |
-| `tests/quota.test.mjs` | 10 | 本地SQLite+D1 shim的用户/站点隔离、跨日幂等、预算/并发争抢、失败拒绝 |
-| `tests/recorder.test.mjs` | 16 | 假浏览器音频环境下采集/flush/30秒/中断/晚到轨道，UI同意撤销与key清理 |
-| `tests/preservation.test.mjs` | 3 | 保留资源哈希、可移植认证helper哈希、两主入口及声明 |
-| `tests/tuotuo.test.mjs` | 5 | 展示包装委托、不改ack/done、编辑保护和页面元素 |
-| `tests/tuotuo-intro.test.mjs` | 7 | 伪DOM中开场阶段、跳过、reduced motion、焦点及抢占 |
-| `tests/tuotuo-saver.test.mjs` | 8 | 假电量、隐藏详情、三条未来倒计时、节点复用/排序 |
-| `tests/tuotuo-portrait.test.mjs` | 4 | 同文档切换、存储偏好、窄屏恢复、390px静态CSS断言 |
-| 合计 | 86 | 不含真实付费上游或真机验证 |
+| `tests/api-request.test.mjs` | 4 | 新provider字段/错误提示、本人key清理、无重试 |
+| `tests/asr-integration.test.mjs` | 8 | 同源iframe、task/memo只填草稿、焦点/inert、告警与屏保关闭、一次性handoff |
+| `tests/asr-provider-safe.test.mjs` | 8 | 官方endpoint/workspace约束、Qwen JSON、返回提取、能量检测、独立发送同意、无本机key resolver、匿名ready与登录 |
+| `tests/audio-validator.test.mjs` | 11 | PCM16 WAV结构、时长/大小/边界、中断 |
+| `tests/handler.test.mjs` | 18 | 同源/身份/字段/配额/幂等、上游60秒deadline、响应和错误、无重试 |
+| `tests/quota.test.mjs` | 10 | SQLite D1 shim的隔离、跨日幂等、12连接并发预算/次数争抢 |
+| `tests/recorder.test.mjs` | 12 | 本机录音/flush/30秒/晚到轨道/编码/取消；部分UI测试仍针对旧面板，非新页面E2E |
+| `tests/public-entry.test.mjs` | 1 | 根公开重定向且API认证保留 |
+| `tests/preservation.test.mjs` | 3 | 核心保留资源/3处ASR挂钩的限定差异、认证helper、单一语音入口 |
+| `tests/tuotuo.test.mjs` | 5 | 展示包装不改任务、编辑保护、当前单入口 |
+| `tests/tuotuo-intro.test.mjs` | 7 | 伪DOM开场/跳过/焦点/reduced-motion/抢占 |
+| `tests/tuotuo-saver.test.mjs` | 8 | 电量未知/更新、隐藏详情、3项倒计时/复用排序 |
+| `tests/tuotuo-portrait.test.mjs` | 4 | 同文档390px、偏好/窄屏恢复、CSS断言 |
+| 合计 | 99 | 不等于真实浏览器/设备/付费ASR验收 |
 
-`tests/sqlite-d1.mjs` 是测试辅助，不是另一个测试套件。preservation对已明确移除的模型不假装做存在验证，且部分历史路径被跳过；它不是整个ZIP所有文件校验的替代，因此另做manifest检查。
+### 9.2 云端UI和部署事实
 
-### 9.2 浏览器和设备证据
+v22在2026-10-31 **04:45:56 UTC**部署成功，public，包含根入口修复、390px切换和单一百炼语音。已完成独立安全代码审查与支持的云Chromium UI检查：根工作台、单一语音导航、390px语音页/设置、任务和备忘草稿目标、原提醒栏等检查通过。独立审查不是形式化安全证明，云浏览器不是实体手机。
 
-已有源码工作台桌面浏览器实测：键盘/重复切换、390px预览、输入草稿保留、已有提醒继续、完成数不变，主体/屏保390px与内容/弹窗358px。它证明的是该测试范围，不是全部工作流。展示相关27项Node测试使用VM/伪DOM/静态断言，不能当Chrome/iOS实际交互记录。
+生产四项非secret变量已设置并启用，D1两表存在，数值见7.8。官方登录链接已从云浏览器到达OpenAI欢迎登录页，未填账号或完成登录。普通Python HTTP探测被边缘403/1010阻断，没有绕过；不能把这个结果改写成应用层401已测或推断API不工作。
 
-尚未验证：
+### 9.3 明确未验证
 
-- 真实麦克风权限弹窗、设备音频解码、后台/锁屏连续提醒、真实硬件震动。
-- iPhone/iOS、Android、多种桌面浏览器、辅助技术完整可访问性。
-- 录音进行中反复切换390px布局，所有提醒/弹窗/录音竞态。
-- BYOK真实浏览器端到端、生产 `/api/session` 与真实认证隔离、生产D1写入/索引/并发。
-- 真实OpenAI请求、模型账户可用性、个人余额与实际账单；所有测试上游均模拟，无真实患者音频或计费。
-- 缺模型状态之外的独立ASR加载、速度/内存、离线缓存持久性、识别准确性；没有医学基准。
-- 全新Windows/macOS/Linux安装矩阵，依赖安全/许可证完整审计；`lint`未记录为已通过。
+- 本人百炼key有效性、地域/业务空间/模型权限、真实上游识别、provider账单/余额；没有真实付费转写验收。
+- 已完成认证的真实用户端到端、两个真实账户的生产D1隔离与预算行为；代码测试通过不等于生产身份链已验。
+- 实体iPhone/iOS/Android、真实麦克风、暂停/恢复权限、噪声/轻声/长停顿、后台锁屏/来电、硬件震动。
+- 语音iframe真实音频资源释放、postMessage与frame卸载时序、录音中布局反复切换的设备矩阵。
+- 新页面所有设置/文件转换/取消边界的完整浏览器自动化；部分recorder UI单测仍使用旧脚本，必须补当前页面测试。
+- 从零Windows/macOS/Linux依赖安装、依赖漏洞/许可完整审计、完整辅助技术可访问性。`lint`没有被记录为已通过。
+- 旧离线ASR恢复、缓存持久性、模型医疗准确率/专名与数字错误率。当前产品不启用旧本地路线。
 
-### 9.3 生产入口紧急修复与本包不同
+### 9.4 已解决的历史问题
 
-2026-10-31交接过程中发现：公开v18首页仍无条件调用 `requireChatGPTUser('/')`，实际转到 `signin-with-chatgpt?return_to=%2F` 时出现404，导致用户从根地址不能打开工作台。
+- v18公开根无条件登录并遇signin404：v21已修，v22已包含，**新版不需要再手动补入口diff**。
+- v20告警监听但没有实际dispatch：v22 `enqueueAlarm()`真实派发，另有屏保观察兜底；旧缺陷不再列未修。
+- 多套语音UI混杂：v22只加载新百炼语音页面，旧文件仅参考，不是需要恢复的功能缺失。
+- 匿名把未登录误解为后端未配置：session新增backendReady分离身份；不能因此跳过登录。
+- 上游错误过度统一：新provider错误码与中文提示已分类，原“统一TRANSCRIPTION_FAILED_NO_RETRY”描述失效。
 
-已单独部署 **v21入口修复**，提交 `0539ced58ad138c19e118bf6ee2059727664e068`，2026-10-31 04:21:51 UTC部署成功。它基于**v18**，只把公开首页直达静态工作台；API鉴权不变、API仍关闭。修复分支73 tests、类型检查、build通过；云端浏览器从生产根地址实际进入工作台并看到完整界面。此事实不等于所有用户网络/设备均已验证。
+## 10 仍需处理的问题和优先级
 
-**v21不是v20全部功能的部署**：生产分支是v18+入口修复；390px与新版BYOK候选仍以交付v20代码为准，未因此全部上线。不要用版本数字大小替代代码谱系。
+本手册只更新公开交接信息，没有改动源码。已修问题见9.4，以下是仍存在的代码边界/推断风险或未验工作。
 
-既定ZIP和SHA-256没有改，ZIP中的 `app/page.tsx` **仍含旧登录入口**。接手者如要让公开候选首页也直接打开，应在自己分支应用以下精确改动，之后重跑验证，不要宣称原ZIP已经包含：
-
-```diff
--import {requireChatGPTUser} from './chatgpt-auth';
- import {redirect} from 'next/navigation';
- export const dynamic='force-dynamic';
--export default async function Page(){await requireChatGPTUser('/');redirect('/legacy/index.html');}
-+// The public demo is browser-local. Protected API routes enforce their own identity.
-+export default function Page(){redirect('/legacy/index.html');}
-```
-
-这个补丁只释放公开演示首页，不移除 `app/api/` 的认证，不改认证helper，不打开 API，不补密钥。若接手目标是私有站点而非公开演示，先确认访问策略，再决定首页路径，不能把补丁机械当作所有部署都必须匿名的授权。
-
-## 10 已知问题和优先级
-
-以下区分直接代码事实、风险推断与未验事项；本手册未改公开ZIP源码；生产独立入口补丁见9.3。
-
-| 优先级 | 问题和证据 | 建议修复与完成条件 |
+| 优先级 | 问题 | 下一步和完成条件 |
 | --- | --- | --- |
-| P0 接手先做 | ZIP仍保留依赖托管登录的根入口，原生产曾因此404；生产已单独hotfix，见9.3 | 对需要公开入口的新分支应用精确根补丁；根/legacy都可打开，API匿名仍被拒绝或关闭，禁止顺带部署v20 |
-| P0 启用前 | `SITE_ID`占位不会自动被拒绝；认证helper依赖可信入口 | 增加占位fail-closed和真实网关检查；恶意外来身份头不生效，独立site/user额度隔离 |
-| P0 启用前 | API默认关闭、真实身份/生产D1/付费上游未验 | 维持关闭直到授权测试；先GET无费用检查，再由用户确认本人key和虚构音频的一次可计费测试 |
-| P1 | `care-alarm-start`被API/intro监听，但`enqueueAlarm()`未派发 | 加真实入队到API取消的集成测试，再补事件或明确协调器；不能只测试手工dispatch |
-| P1 | `doClear()`不清活动告警队列/定时器，文案似全量但只清任务+研究草稿 | 先定义清除范围和保留项；清任务后无悬挂提醒，备忘若保留需明确展示；破坏性清除须用户确认 |
-| P1 | 完成队列中的任务未主动去掉告警 | 由产品明确完成是否也停止该项提醒；无论何种策略，保持知悉≠完成并补多队列测试 |
-| P1 | 同一浏览器换账户仍共享任务/备忘/草稿 | 先设计身份命名空间和迁移/清理，不能擅自上传历史本地数据；所有测试用虚构资料 |
-| P1 | 缺模型与示例却仍显示加载65/66MB/示例按钮 | 先给公开版明确禁用/缺资源说明；授权恢复前不能假造权重、准确率或训练成功 |
-| P1 | API关闭/取消保留DOM转写及核对状态 | 定义关闭清理策略、清空文本与核对状态的边界并补测试，保留用户必要草稿时需明确提示 |
-| P1 | localStorage仅检查顶层数组；字段损坏可致崩溃 | 增加schema校验、版本迁移、坏数据隔离与可恢复备份，避免静默覆盖或全清 |
-| P2 | 设置“前台提示音”仅改`sound`并试听，告警实际读`vibSound` | 合并/澄清真正音效开关并测试，避免开关名与实际行为冲突 |
-| P2 | 备忘换日期会清`editingMemo`但保留textarea，可能另存副本；删除/恢复没历史事件 | 明确编辑会话/日期变化行为，补取消编辑、历史查看/完整历史策略 |
-| P2 | 页面日期头只初始化一次、跨午夜可能陈旧；统计依赖重渲染 | 增加跨日刷新测试，明确本机日期与班次不是同一概念 |
-| P2 | 无跨标签storage同步，多个标签写localStorage可覆盖 | 设计冲突检测和同步，不把单机多标签误说成协作后端 |
-| P2 | 异常API请求的前端提示过于统一；超大body落502而非413 | 在不泄露key/上游细节前提下改结构化错误与可操作提示；不新增自动重试 |
-| P2 | D1 ledger无安全保留/归档机制，健康检查仅可读 | 先定跨日幂等保存规则，再加健康检查/可观测性；绝不把删表当释放余额 |
-| P2 | README模板过时、基础CSS有依赖浏览器恢复的EOF闭合情况 | 清理文档状态与正确路径；改变CSS前做视觉回归和390px重生成，不扩大无关重构 |
-| 持续未验 | 真机/后台提醒/语音识别/ASR性能/可访问性 | 建立具体设备与场景测试矩阵，记录失败也可验收为明确不支持，不伪造通过 |
+| P0 真实使用前 | 无真实认证+本人百炼key+合成/虚构音频付费验收 | 用户明确允许一次可能计费测试后才执行；记录结果/费用风险，不自动重试，不使用共享key |
+| P0 独立部署前 | 公开SITE_ID占位非空会通过现有检查；身份头依赖可信入口 | 替换独立ID并增加占位fail-closed；伪造头必须被可信网关剥离，真实DB/HTTPS配置核验 |
+| P1 | VAD按能量猜结束，噪声/轻声/长停顿可能误判 | 真实设备和噪声场景测停止率/截断，始终保留试听和手动发送，不宣传实时词识别 |
+| P1 | 暂停只suspend音频图，未立即停止麦克风track | 文案明确暂停≠释放设备；验证平台麦克风指示，若需完全释放须重设计恢复流程 |
+| P1 | 新页面录音/文件转换/暂停/iframe关闭缺完整真浏览器矩阵 | 为当前asr/app.js补集成测试，勿把旧API面板单测冒充新UI E2E |
+| P1 | 已核对≤12000字符可经JS追加到maxlength5000的备忘框，追加长度缺统一上限 | 统一目的地长度/截断/提示策略，不静默丢内容；多次追加也需验证 |
+| P1 | 独立/asr回传sessionStorage写入无catch；返回memo未主动展开memoPanel | 失败提供复制/保留草稿回退；正确展开目的地，别让用户以为结果丢失 |
+| P1 | 本地任务/备忘/草稿未按登录用户隔离，多个标签无冲突处理 | 设计身份命名空间、迁移/删除/恢复和storage同步；未经批准不上传已有本地数据 |
+| P1 | `doClear()`只清任务+研究草稿，不清活动队列/定时器、备忘/偏好 | 定义清除范围与确认文案；清任务后无悬挂告警；不能无授权全清浏览器数据 |
+| P1 | 完成正在提醒的任务不自动移除其队列项 | 明确产品规则并测多项队列；ack不能变done，完成与停止是否联动须设计 |
+| P1 | localStorage仅顶层数组检查，坏字段可使渲染失败 | 增加schema/版本迁移/坏数据隔离，不静默覆盖记录 |
+| P2 | 设置“前台提示音”只改sound，实际告警读vibSound | 合并或澄清开关，真实试听验证 |
+| P2 | 备忘换日期清editingMemo但保留文本，可能另存；软删/恢复无完整历史 | 明确编辑会话与历史策略、补取消编辑/跨日期用例 |
+| P2 | 旧文件/不可达分支仍提本地识别或本机key，备忘placeholder过时 | 清理文案和死代码前确认当前依赖；保留pcm-worklet，不恢复未审resolver |
+| P2 | 日期头跨午夜不主动更新、统计依赖重渲染 | 加跨日刷新；保持本机日和医院班次区分 |
+| P2 | multipart总body超限可落502，ledger无归档/查询/退款 | 改安全结构化错误；保留跨日幂等，不定时删表冒充释放额度 |
+| 持续 | 真实设备可访问性/后台提醒/语音质量未验 | 明确支持或不支持的设备/场景；不拿Web演示作护理可靠闹钟 |
 
-## 11 接手后的验收矩阵
+## 11 接手验收矩阵
 
-先在独立副本/分支上工作，只用虚构资料。下面是待执行的验收计划，不是本轮全部已经通过。
+下面是继续开发的验收计划，不是声称每行已通过。所有数据用虚构资料；有费用、部署或远程数据库动作先授权。
 
-| 验收项 | 操作 | 通过证据 | 需要的边界 |
-| --- | --- | --- | --- |
-| 包完整性 | 校验ZIP SHA和194文件manifest | 无缺失/哈希不符，记录工具和时间 | 不改原ZIP冒充旧哈希 |
-| 干净安装 | 新目录各平台安装锁定依赖 | 命令退出0、记录OS/Node/npm | 不升级锁、不改代理/TLS来硬过 |
-| 静态工作台 | dev和build preview访问legacy | CSS/JS/图像/6音效无错误路径 | 首页认证按所选公开/私有策略另测 |
-| 入口补丁 | 根地址直接打开公开演示 | 无signin404，API仍关闭/鉴权 | 只应用9.3补丁，不移除API认证 |
-| 人工建卡 | 输入缺字段/完整字段，分别提交 | 缺字段阻止、确认才创建、due符合起点 | 不填临床默认时间 |
-| 知悉/完成 | 到时→知悉→查看→完成 | ack时done仍false；完成表单后才true | 多任务队列逐项确认 |
-| 更正/总结 | 追加更正、跨日与搜索统计 | 原日志保留、按本机日与任务去重 | 不称不可篡改审计 |
-| 提醒不中断 | 返回工作台、打开弹窗、重复切换布局 | 提醒按选定规则继续/停止，数量不改 | 用实际耳听/计时，不能只看DOM |
-| 清除/完成竞态 | 有活动队列时清任务/完成 | 无悬挂告警，清理范围明确 | 待先修已知bug |
-| 音效映射 | 六首试听、固定/随机、0/70/200% | 路径有效，整曲完后间隔，当前不换曲 | 200%不是硬件能力保证 |
-| 屏保 | 空闲10秒、编辑、模态框、录音 | 安全遮蔽、交互保护、无伪造电量 | 真锁屏与后台另测 |
-| 开场 | 首次、重播、跳过、Escape、降动态 | 焦点恢复、不挡已有到时提醒 | 不改任务/音频生命周期 |
-| 390px布局 | 桌面反复切换、≤760再变宽 | 同文档、草稿/计时/录音实例不重建 | 真机验收单列 |
-| 研究知识 | 搜索/多候选/生成/编辑草稿 | 26候选可看，default时间仍null，不计时 | 不自动clinical approve |
-| 备忘 | 保存/编辑/软删/恢复/日期变更 | 不新增任务，不增完成数，历史范围如实 | 避免真实资料 |
-| 本地ASR缺项 | 点击加载/示例 | 明确缺资源，不云端兜底 | 缺权重不应伪装ready |
-| 本地ASR恢复后 | 经许可的合成/公开音频、各设备 | 加载完整性、延迟/内存、错误率可重复 | 先完成许可；不等于临床批准 |
-| BYOK无费用 | 默认关闭；改无效模型/无同意/假文件 | 没有上游请求、无共享key、清理正确 | 只用模拟transport |
-| 可信会话 | HTTPS staging两用户与匿名 | 匿名拒绝、身份不可伪造、额度隔离 | 需要实际授权部署环境 |
-| 上游单次测试 | 本人key+虚构音频+明确付费同意 | 单请求、待核对文本、无自动重试 | 先确认费用，失败仍可能收费 |
-| 取消/告警抢占 | 权限待定、录音、flush、发送时取消/入队 | 释放轨道、清key、忽略晚到结果 | 修事件链后做真浏览器测试 |
-| 回归 | 86tests、TS、build，另记lint结果 | 每条独立退出码、无敏感日志 | 模拟成功不升级为生产成功 |
+| 项目 | 操作和通过证据 | 禁止误判 |
+| --- | --- | --- |
+| 新包完整性 | 校验新版ZIP SHA和manifest；确认归档根直接有package.json | 不用旧v20嵌套解压命令或旧哈希 |
+| 干净安装 | 各平台新目录install:ci，记录OS/Node/npm/退出码 | 不擅自升级锁、关TLS或改代理来硬过 |
+| 根和页面 | `/`直达legacy；`/asr/`和嵌入页面样式/脚本无404 | API认证不能因公开根被删除 |
+| 原任务 | 缺字段阻止、人工核对才创建；ack后仍未done | 到时/录音停止/采用不能自动完成 |
+| 留痕与总结 | 更正追加、按本机日期/任务去重、搜索范围一致 | 非医疗签名、非不可篡改日志 |
+| 音效/屏保 | 六音效、整曲后间隔、0–200%、三项隐藏倒计时/电量未知 | 音效不等于震动，网页屏保不等于系统锁屏 |
+| 开场/390px | 跳过/Escape/reduced-motion、桌面和≤760切换、草稿/计时不变 | 390px不是iOS模拟 |
+| 单一入口 | 只有百炼语音，旧3面板/脚本不加载 | 保留历史文件不算启用 |
+| 设置边界 | 北京/新加坡、workspace合法/非法、模型配对、改设置撤同意/清key | 不接受任意URL、共享key或自动地域fallback |
+| 本机录音 | 真设备录/暂停/恢复/手停/1.8秒静音/8秒无声/30秒/flush | 所有停止都只能预览，暂停非立即释放track |
+| 文件转换 | ≤10MiB和≤30秒、浏览器可解码/失败、取消转换、重选 | 原格式导入不是上游任意格式支持 |
+| 发送授权 | 未保存设置/未登录/无key/无同意/后台都不上传 | 录完不能自动调用API |
+| 草稿目标 | task/memo追加保留原文、不建卡/不保存、超长/多次追加 | 草稿不等于已批准记录 |
+| message安全 | 他源、旧frame、错误类型、超长被拒绝；关闭恢复焦点 | same-origin检查不代表整站XSS审计完成 |
+| 独立handoff | 5分钟内一次性、过期/未来时间拒绝、存储禁用回退 | 5分钟不是自动擦除保证 |
+| 告警抢占 | 录音/上传时实际到时或返回屏保，释放/中止/不ack/done | 单测手工dispatch不替代真实调度/设备 |
+| 匿名状态 | backendReady与authenticated分离，有真实平台登录链接 | ready不等于认证或provider已连通 |
+| 后端拒绝 | 6字段/consent/WAV/同源/幂等/分钟限额/日预留/超时 | 本地401测试不写成生产直接测得401 |
+| 真实单次验收 | 用户授权后本人key、虚构音频、同意、单次请求、待核对文本 | 失败仍可能收费；禁止自动重试 |
+| 回归 | 99tests、TS、build分别记退出码；lint单独记 | mock/云Chromium不替代真机/临床准确率 |
 
-## 12 安全修改和回滚
+## 12 修改、独立部署与回滚
 
-1. 保留原ZIP及校验值，在独立工作副本建分支。解压目录本身没有原v20的 `.git` 历史；GitHub交付仓库的提交和原托管源码提交也不是同一个git谱系。不要直接 `git reset --hard aa61...` 幻想恢复不存在的历史。
-2. 改动前记录范围、要保持的不变量、当前测试和可见缺陷。优先补针对问题的失败测试，再做最小修复；不得把本地安装/格式化造成的大量变化混入业务补丁。
-3. `rollback-assets.json` 是保留资产基线，**不是自动回滚脚本**。全量恢复可从已验ZIP解压到新目录比较，或在自己初始化后的分支使用明确提交回退；不要覆盖用户未提交改动。
-4. 改CSS后重生成竖屏样式，实测桌面/390px/真窄屏。改任务/存储schema要先有兼容/迁移与回退计划；不要让旧localStorage自动毁坏。
-5. 数据库回滚与代码回滚分开。当前没有向下迁移；已经预留的ledger代表防重/额度事实，不可为了“回滚API”删除。新schema应兼容原表，远程迁移前做有权的备份及恢复验证。
-6. 发现API问题时先恢复关闭开关、停止新上游调用；已发出的请求可能仍收费。不要紧急换成拥有者共享key、不可信代理或关闭鉴权。
-7. 生产回滚需要另外授权，并选实际保存/验收过的部署版本；公开ZIP含配置占位，不能当生产一键回滚包。当前生产v21仅入口修复，若回退v18会重新引入根登录404，需明确权衡。
-8. 新交付包改任何文件都须重算SHA、更新manifest、归档说明、验证差异与许可范围，保留旧版本可追溯。只更新本手册不会改变先前ZIP哈希；不要给新文档伪造包内自校验。
+1. 从新版ZIP解压到新目录，保留原哈希；不要覆盖旧v20 ZIP。公开包是脱敏可移植候选，不是生产原提交逐字节档案；解压目录没有原git历史，源提交号不保证能在交付仓库checkout。
+2. 新源码已有公开根修复，不再按旧手册反复应用v21入口patch。生产v22也不是只修入口：已包含新百炼UI与390px；回滚到v21会失去这些新能力。
+3. API生产当前启用与独立包默认关闭分开管理。新增独立部署先配自己的稳定SITE_ID、可信身份网关、D1表与约束、精确HTTPS origin和预算，再有意识地开关；不要复制原私有部署标识或启用共享key。
+4. 先限定改动并补失败测试。当前前端经典全局脚本、ES module和同源iframe共同工作，勿大规模重构加载顺序而不测提醒/编辑状态。改样式后重生成portrait-responsive并看主页面和asr iframe。
+5. `rollback-assets.json`是限定资产保持基线，不是自动回滚脚本。新的3处ASR生命周期挂钩在preservation里按明确规则归一化检查，不意味着所有新逻辑已被回归覆盖。回退用独立分支或新目录比较，不覆盖用户未提交修改。
+6. 数据回滚和代码回滚分开；D1当前无向下迁移。不得删除预留ledger来绕过日额度或跨日幂等；远程迁移/备份需授权。任务localStorage schema改动必须有兼容和恢复计划。
+7. 出现provider异常时可按授权关闭新请求并保留证据；已发请求仍可能收费。不能偷偷切地域/服务商、共享key或关闭认证。暂停付费能力不等于删除用户本机记录。
+8. 生产发布/回滚/远程变量变更需单独授权及验收；源码ZIP不是一键生产恢复包。旧v21入口修复可作历史回退基线，但旧语音备份不在公开包，不能从私有备份自动公开。
+9. 新发布包任何变化都重算manifest和archive-check，保留旧包。本文同名更新保留文档身份/版本记录；它不是ZIP自哈希的一部分。用户上传环境文件、key、模型许可未核实内容始终不发布。
 
-## 13 可直接交给本地模型的接手提示词
+## 13 可复制给本地模型的接手提示词
 
 ```text
-你接手的是 TUOTUO 照护工作原型，目标是在自己的本地环境安全理解和维护代码。
-先读 TUOTUO-LOCAL-MODEL-HANDOVER.md 的版本矩阵与验收边界，再定位解压后的
-package.json、public/legacy/index.html 和 PUBLIC-FILE-MANIFEST.json；不要在只有ZIP
-的交付仓库根运行npm。先核实实际文件和哈希，不假设聊天历史、私有环境或原git历史存在。
+你接手的是 TUOTUO v22 非临床照护工作原型，只用虚构资料。
+先读 TUOTUO-LOCAL-MODEL-HANDOVER.md 与新版PUBLIC-CANDIDATE.md、SAFE-ASR-HANDOFF.md。
+主交付是tuotuo-v22-public-source.zip；归档根直接有package.json，无旧v20外层目录。
+先核对SHA/manifest，解压到新工作目录再运行npm。旧tuotuo-latest-public-source.zip只是v20历史。
 
-当前公开源码基于v20并做公开化清理；生产是v18基础上的v21入口修复，v20的全部功能
-尚未部署。ZIP不含v21根入口补丁。不要以版本数字大推导已合并全部功能。
-若目标是继续公开演示，先在新分支按手册9.3审查并应用公开根入口补丁；API鉴权不变。
+当前功能源commit 7acc3f2e5535647e61864bf29514d72570274225，生产v22已部署，包含公开根入口、
+390px和单一百炼语音。独立公开包仍关闭API并用独立配置占位；不能把生产启用值当你的部署授权。
+根公开不等于API匿名。认证依靠可信托管入口，严禁手工伪造身份头绕过生产。
 
-本原型只用虚构资料。不要推断医嘱、医学时间、患者身份或临床结论；缺字段先追问。
-提醒到时、已知悉和工作完成是三件不同的事，ack不能设置done。研究知识草稿默认不计时。
-任务/备忘/草稿在localStorage，不按登录用户隔离；D1只存API配额元数据。
-本地模型权重和FLEURS示例被明确排除，不能声称完整离线/训练成功，也不能擅自补回。
+当前工作台只加载asr-integration.mjs，打开同源/asr/ iframe；旧本地/browser/OpenAI UI不加载。
+当前设置只显示百炼北京/新加坡、qwen-audio-3.1-asr-flash；后端保留OpenAI五模型兼容但不显示。
+不要照抄旧v20的四字段、OpenAI-only、20秒超时或旧consent说明。实际API看手册第7节。
 
-BYOK只用用户本人当次输入的key，经本站后端到固定OpenAI官方转写地址，严格五模型
-allowlist；变更key/模型/音频撤销同意，不存key、无共享兜底、不自动重试。
-API默认关闭。不要使用假身份头绕过生产认证、不要自动开启付费测试或生产部署。
-取消不保证未计费；SITE_ID占位必须主动替换；connected不证明上游可用。
+录音、静音端点、30秒上限、文件导入只做本机预览。用户保存本次设置，勾本轮明确目的地和费用
+同意，再手动发送才上传。只用本人手填key，不持久化、不读.env.local、不用共享key或本机resolver，
+无自动重试/地域fallback。改音频/模型/provider、workspace、key须撤销同意；取消不保证未计费。
+backendReady只是配置/表可读；authenticated是身份；connected需要两者，不代表provider账单/权限已验。
 
-先向我报告：实际文件/版本，如何运行，已经验证什么、未验证什么，你计划改哪几个文件，
-需保持哪些行为。不要先进行整站重构、依赖升级、格式化全库或修改系统代理/TLS安全策略。
-只执行我授权的范围；涉及部署、远程数据库、费用、数据公开或许可证恢复时先取得明确授权。
-任何源码改动后跑node测试、类型检查、构建；UI改动还需实际浏览器验证，不用伪DOM代替真机。
-最终交付应列出变更文件、证据、剩余风险、回滚办法；严禁把真实key、患者资料、邮箱、OTP、
-私有服务ID或内部路径写入GitHub、日志和截图。
+转写必须人工核对，采用只追加到任务输入或备忘草稿，不自动解析、建卡、计时、保存或完成。
+ack不等于done。任务/备忘/知识草稿仍是同origin localStorage，未按登录用户分区。
+独立/asr/返回会短暂用sessionStorage tuotuo-asr-handoff传已核对草稿，key/音频不进入该存储。
+本地Whisper权重/FLEURS仍不在公开包；保留旧代码不是当前离线功能或训练成功证明。
+
+先报告实际版本、文件、运行路径、已验和未验、计划改动及不变量。先做最小授权变更和测试，
+不要全站重构、升级依赖、改代理/TLS/系统安全策略或自动部署/开启付费测试。
+有费用、远程数据库、部署、数据公开、模型素材恢复时先获得明确授权。
+改后跑99tests、类型检查、build，UI另外真浏览器验证；mock不代替实体手机/麦克风或临床准确性。
+不读/公开上传.env.local、实际key、用户邮箱、患者资料、OTP、私有服务ID或内部路径。
+最终交付变更文件、证据、剩余风险和回滚；失败如实说，不伪造生产401、真实登录或转写成功。
 ```
 
-### 建议读文件顺序
+### 建议读取顺序
 
-1. 本手册、交付根短说明与外部manifest；再看包内 `PUBLIC-CANDIDATE.md` 的打包快照边界。
-2. `package.json`、`package-lock.json`、`scripts/execution-profile.mjs`、`scripts/run-framework.mjs`、`vite.config.ts`、`.openai/hosting.json`。
-3. `app/page.tsx`、`app/layout.tsx`、`app/chatgpt-auth.ts`、`worker/index.ts`，理解公开入口与认证边界不是同一层。
-4. `public/legacy/index.html`，按脚本和CSS加载顺序看 `app.js` → `sounds.js` → `knowledge.js` → `memos.js` →各语音模块 → TUOTUO展示包装。
-5. `public/voice-intake.mjs`、`local-asr-ui.mjs`、`local-asr/`全套、`LICENSES.txt`，区分浏览器语言包与Whisper权重。
-6. `public/api-models.mjs`、`api-recorder.mjs`、`api-request.mjs`、`api-voice-ui.mjs`，再看 `app/api/`、`server/`、`db/schema.ts`、实际Drizzle迁移。
-7. `tests/`逐项对照实现，重点检查真实事件接线而不只是测试手动调用。
-8. 知识JSON、素材归属/notices、manifest与下方完整文件索引；最后才查未被业务使用的starter组件和connector基础设施。
+1. 本手册版本矩阵、新版manifest/archive-check、`PUBLIC-CANDIDATE.md`、`SAFE-ASR-HANDOFF.md`。
+2. `package.json/lock`、profile/安装/运行脚本、vite/hosting、根page、认证helper和worker。
+3. `public/legacy/index.html`及其实际脚本顺序；`app.js/sounds.js/memos.js/knowledge.js`与TUOTUO展示模块。
+4. `public/asr-integration.mjs`、`asr/index.html/app.js/styles.css`、`api-recorder.mjs`、`speech-endpoint.mjs`、当前复用的pcm-worklet。
+5. `api-models.mjs/api-request.mjs`、`app/api/`、`server/transcription-handler.mjs`、`server/provider-transport.mjs`、`server/audio-validator.mjs`、`server/quota.mjs`、`server/runtime-config.mjs`。
+6. schema与迁移、99tests，对照测试是否实际加载当前UI，不把旧脚本测试当新页面验收。
+7. 知识26条、素材归属和notices、完整文件索引；最后才研究未启用的旧本地ASR和starter组件。
 
-### 绝对不能混淆的结论
+### 不可混淆的结论
 
-- GitHub已公开 ≠ v20已部署；生产v21入口补丁 ≠ v20功能全部上线。
-- build通过 ≠ fresh install通过；86个模拟测试 ≠ 真实API/真机/临床验收。
-- 本地JS/WASM运行库存在 ≠ 模型权重存在；推理代码 ≠ 实际训练。
-- 26条知识 ≠ 26个独立来源 ≠ 院内批准 ≠ 可自动计时。
-- 录音停止 ≠ 上传同意；转写返回 ≠ 已核对；采用文本 ≠ 创建/完成任务。
-- 知悉 ≠ 完成；音效 ≠ 硬件震动；浏览器屏保 ≠ 安全锁屏/可靠后台闹钟。
-- 登录 ≠ 组织成员授权；服务器额度隔离 ≠ 浏览器localStorage跨用户隔离。
-- `connected:true` ≠ 模型权限/余额/费用上限保证；取消 ≠ 不收费。
-- 公开源码 ≠ 全材料自由授权；权限/来源未核实的缺项不能靠模型猜测补齐。
-
+- 生产v22已部署 ≠ 独立公开包已配置可用 ≠ 本人真实付费ASR已验。
+- 一个百炼UI入口 ≠ 后端删除OpenAI兼容；旧文件存在 ≠ 当前加载或有旧功能入口。
+- 录音停止/端点检测 ≠ 上传同意；波形动画 ≠ 实时音量；暂停 ≠ 已释放麦克风track。
+- 已核对草稿回传 ≠ 自动保存/创建任务；ack ≠ done；原型留痕 ≠ 可信医疗审计。
+- backendReady ≠ authenticated ≠ 真实provider成功；10次日预留 ≠ provider费用硬上限。
+- key/音频不持久化 ≠ 所有已采用文本从不存储；sessionStorage短时handoff要单独说明。
+- 云浏览器登录欢迎页 ≠ 已登录；边缘403/1010 ≠ 应用401；mock99通过 ≠ 真机/医疗验证。
+- 26条资料 ≠ 26个独立来源 ≠ 院内批准；缺模型不能靠猜测/未审旧包补齐。
+- 公开可见 ≠ 所有素材自由授权；保留运行库许可不等于转换权重已获再分发许可。
 ## 附录 A 完整源码文件索引
 
-以下索引由本次公开候选实际文件树生成，共195个文件；这是解压项目的索引，不包含交付根额外的本手册。精确SHA-256看 `PUBLIC-FILE-MANIFEST.json`（194项，不自哈希），不要将下方简化职责表替代清单。
+以下索引由本次公开候选实际文件树生成，共207个文件；这是解压项目的索引，不包含交付根额外的本手册。精确SHA-256看 `PUBLIC-FILE-MANIFEST.json`（206项，不自哈希），不要将下方简化职责表替代清单。
 
 ```text
 .env.example
 .gitignore
+.next/types/routes.d.ts
 .npmrc
 .openai/hosting.json
 ASSET-RIGHTS-PENDING.md
-BYOK-ASR-HANDOFF.md
 PUBLIC-CANDIDATE.md
 PUBLIC-FILE-MANIFEST.json
 README.md
+SAFE-ASR-HANDOFF.md
 THIRD-PARTY-NOTICES.md
 app/api/session/route.ts
 app/api/transcriptions/route.ts
@@ -1005,6 +1004,7 @@ lib/connector-preview.d.ts
 lib/connectors.ts
 lib/utils.ts
 migrations/0001_quota.sql
+next-env.d.ts
 next.config.ts
 package-lock.json
 package.json
@@ -1014,6 +1014,11 @@ public/api-recorder.mjs
 public/api-request.mjs
 public/api-voice-ui.mjs
 public/app.js
+public/asr-integration.css
+public/asr-integration.mjs
+public/asr/app.js
+public/asr/index.html
+public/asr/styles.css
 public/assets/botanical-note.svg
 public/assets/nursing-knowledge.json
 public/assets/paper.svg
@@ -1048,6 +1053,7 @@ public/local-asr/vendor/ort-wasm-simd-threaded.jsep.wasm
 public/local-asr/vendor/transformers.min.js
 public/memos.js
 public/sounds.js
+public/speech-endpoint.mjs
 public/style.css
 public/tuotuo-intro.css
 public/tuotuo-intro.js
@@ -1081,6 +1087,7 @@ scripts/vite/connector-preview-plugin.mjs
 scripts/vite/sites-vite-plugin.LICENSE
 scripts/vite/sites-vite-plugin.ts
 server/audio-validator.mjs
+server/provider-transport.mjs
 server/quota.d.mts
 server/quota.mjs
 server/runtime-config.d.mts
@@ -1088,9 +1095,12 @@ server/runtime-config.mjs
 server/transcription-handler.d.mts
 server/transcription-handler.mjs
 tests/api-request.test.mjs
+tests/asr-integration.test.mjs
+tests/asr-provider-safe.test.mjs
 tests/audio-validator.test.mjs
 tests/handler.test.mjs
 tests/preservation.test.mjs
+tests/public-entry.test.mjs
 tests/quota.test.mjs
 tests/recorder.test.mjs
 tests/sqlite-d1.mjs
